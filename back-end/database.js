@@ -10,9 +10,16 @@ const con = mysql.createConnection({
     database: process.env.DATABASE
 });
 
+let getAllUsers = () =>{
+    con.query('SELECT * FROM `Utilizadores`', (err, results) => {
+        if (err) throw err 
+        return results
+    })
+}
+
 con.connect((err) => {
 if (err) throw err;
 console.log('Database is connected successfully !');
 });
 
-module.exports = con;
+module.exports = {con, getAllUsers}
