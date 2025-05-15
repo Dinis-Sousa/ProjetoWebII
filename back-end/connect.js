@@ -13,16 +13,44 @@ const con = mysql.createConnection({
 
 let getAllUsers = () => {
     return new Promise((resolve, reject) => {
-        con.query('SELECT * FROM `Utilizador`', (err, results) => {
+        con.query(`SELECT * FROM Utilizador`, (err, results) => {
             if (err) return reject(err);
             resolve(results);
         });
     });
 };
 
+let getUsers = (id) => {
+    return new Promise((resolve, reject) => {
+        con.query(`SELECT * FROM Utilizador WHERE user_id = ?` [id], (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
+let getAllAtivities = () => {
+    return new Promise((resolve, reject) => {
+        con.query(`SELECT * FROM Atividade`, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
+let getAllSchools = () => {
+    return new Promise((resolve, reject) => {
+        con.query(`SELECT * FROM Escola`, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
+
 con.connect((err) => {
 if (err) throw err;
 console.log('Database is connected successfully !');
 });
 
-module.exports = {con, getAllUsers}
+module.exports = {con, getAllUsers, getUsers, getAllAtivities, getAllSchools}
