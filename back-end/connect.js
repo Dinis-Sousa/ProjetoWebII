@@ -10,12 +10,15 @@ const con = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-let getAllUsers = () =>{
-    con.query('SELECT * FROM `Utilizadores`', (err, results) => {
-        if (err) throw err 
-        return results
-    })
-}
+
+let getAllUsers = () => {
+    return new Promise((resolve, reject) => {
+        con.query('SELECT * FROM `Utilizador`', (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
 
 con.connect((err) => {
 if (err) throw err;
