@@ -1,26 +1,59 @@
 const express = require('express');
 const app = express()
-const {getAllUsers, getUsers, getAllAtivities, getAllSchools} = require('./connect')
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const {getAllUsers, getUsers, getAllAtivities, getAllSchools, addUser, addSchool} = require('./connect')
 
 let HOST = process.env.HOST || 'localhost';
 let PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.json());
+
+app.get('/', async (req, res) => {
+    try {
+        let answer = 'BEM VINDO AO NOSSO SERVIDOR';
+        res.send(answer);
+    } catch (err) {
+        res.status(500).send('SERVER IS BROKEN')
+    }
+})
 
 app.get('/users', async (req, res) => {
     try {
         const results = await getAllUsers();
         res.json(results); 
     } catch (error) {
-        res.status(500).send('Error fetching users');
+        res.status(500).send('SERVER IS BROKEN');
         console.error(error);
     }
 });
+
+app.post('/api/input', (req, res) => {
+    const input = req.body.data;
+    console.log(input)
+    let result = getUsers(input);
+    res.send(result)
+})
+
+app.post('/registar', async (req, res) => {
+    req.body(escola, nome, email, password)
+})
+
+
+app.post('/registarEscola', async (req, res) => {
+    req.body(nome, morada, codigo, local, tele, email, nivel);
+    addSchool(nome, morada, codgo, local, tele, email, nivel);
+    res.send('Escola adicionada');
+})
 
 app.get('/atividade', async (req, res) => {
     try {
         const results = await getAllAtivities();
         res.json(results); 
     } catch (error) {
-        res.status(500).send('Error fetching users');
+        res.status(500).send('SERVER IS BROKEN');
         console.error(error);
     }
 });
@@ -28,19 +61,9 @@ app.get('/atividade', async (req, res) => {
 app.get('/escola', async (req, res) => {
     try {
         const results = await getAllSchools();
-        res.json(results); 
+        res.send(results); 
     } catch (error) {
-        res.status(500).send('Error fetching users');
-        console.error(error);
-    }
-});
-
-app.get('/users/:id', async (req, res) => {
-    try {
-        const results = await getUsers(id);
-        res.json(results); 
-    } catch (error) {
-        res.status(500).send('Error fetching users');
+        res.status(500).send('SERVER IS BROKEN');
         console.error(error);
     }
 });

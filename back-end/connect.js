@@ -22,9 +22,10 @@ let getAllUsers = () => {
 
 let getUsers = (id) => {
     return new Promise((resolve, reject) => {
-        con.query(`SELECT * FROM Utilizador WHERE user_id = ?` [id], (err, results) => {
+        con.query(`SELECT * FROM Utilizador WHERE user_id = ${id}`, (err, results) => {
             if (err) return reject(err);
             resolve(results);
+            console.log(results[0])
         });
     });
 };
@@ -47,10 +48,17 @@ let getAllSchools = () => {
     });
 };
 
+let addSchool = (nome, morada, codigo, local, tele, email, nivel) => {
+    return new Promise((resolve, reject) => {
+        con.query(`INSERT INTO Escola(nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao) VALUES(?,?,?,?,?,?,?)`,[nome, morada, codigo, local, tele, email, nivel], (err) => {
+        if (err) throw reject(err);
+        resolve(console.log('ADICIONADA COM SUCESSO!!!!!!!!!'));
+    });
+})};
 
 con.connect((err) => {
 if (err) throw err;
 console.log('Database is connected successfully !');
 });
 
-module.exports = {con, getAllUsers, getUsers, getAllAtivities, getAllSchools}
+module.exports = {con, getAllUsers, getUsers, getAllAtivities, getAllSchools,addSchool}
