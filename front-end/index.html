@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <form id="myform">
+        <input type="text" id="myId" placeholder="ESCREVE 1">
+        <button type="submit">SUBMETER</button>
+    </form>
+    <script>
+         document.getElementById('myform').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('myId').value;
+
+            axios.post('http://localhost:3000/api/input', { data: input })
+            .then(res => {console.log(res.data)})
+            .catch(err => console.error('anxious error: ', err))
+            console.log(input)
+  });
+    </script>
+</body>
+</html>
