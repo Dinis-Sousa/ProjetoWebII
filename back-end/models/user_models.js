@@ -1,3 +1,4 @@
+const con = require('../connect')
 
 let getAllUsers = () => {
     return new Promise((resolve, reject) => {
@@ -21,4 +22,4 @@ let getUsers = (id) => {
     });
 };
 
-module.exports = {getAllUsers, getUsers, }
+module.exports = {getAllUsers, getUsers }

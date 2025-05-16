@@ -1,21 +1,21 @@
 const con = require('../connect');
+const ErrorHandler = require('../utils/error')
 
 let getAllAtivities = () => {
-    return new Promise((resolve, reject) => {
         con.query(`SELECT * FROM Atividade`, (err, results) => {
-            if (err) return reject(err);
-            resolve(results);
+            console.log(results)
+            results.forEach(result => {
+                return result
+            });
         });
-    });
-};
+    };
 
 
 let addActivity = (escolaid, areaid, nome, descricao, dataInicio, dataFim, estado) => {
-    return new Promise((resolve, reject) => {
-        con.query(`INSERT INTO Atividade(escola_id, area_id, nome, descricao, dataI, dataF, estado) VALUES(?,?,?,?,?,?,?)`,[escolaid, areaid, nome, descricao, dataInicio, dataFim, estado], (err) => {
-        if (err) throw reject(err);
-        resolve(console.log('ADICIONADA COM SUCESSO!!!!!!!!!'));
+    
+        con.query(`INSERT INTO Atividade(escola_id, area_id, nome, descricao, dataInicio, dataFim, estado) VALUES(?,?,?,?,?,?,?)`,[escolaid, areaid, nome, descricao, dataInicio, dataFim, estado], (err) => {
+        return console.log('A ATIVIDADE FOI ADICIONADA COM SUCESSO')
     });
-})};
+};
 
-module.exports = {getAllAtivities, addActivity}
+module.exports = {addActivity, getAllAtivities}

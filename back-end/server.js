@@ -2,7 +2,9 @@ const express = require('express');
 const app = express()
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const {addActivity} = require('./models/atividade_models')
+const {addActivity, getAllAtivities} = require('./models/atividade_models');
+const { getUsers, getAllUsers } = require('./models/user_models');
+
 
 let HOST = process.env.HOST || 'localhost';
 let PORT = process.env.PORT || 3000;
@@ -30,11 +32,15 @@ app.get('/users', async (req, res) => {
     }
 });
 
-app.post('/api/input', (req, res) => {
-    const input = req.body.data;
-    console.log(input)
-    let result = getUsers(input);
-    res.send(result)
+app.post('/api/input', async (req, res) => {
+    let myObj = req.body.data
+    console.log(myObj.nome)
+     try {
+        const results = await addActivity(myObj.eid,myObj.aid, myObj.nome, myObj.desc, myObj.dateInicio, myObj.dateFim, myObj.estado);
+        res.send(results);
+    } catch (err) {
+        console.error(err)
+    }
 })
 
 app.post('/registar', async (req, res) => {
@@ -51,7 +57,7 @@ app.post('/registarEscola', async (req, res) => {
 app.get('/atividade', async (req, res) => {
     try {
         const results = await getAllAtivities();
-        res.json(results); 
+        res.send(results); 
     } catch (error) {
         res.status(500).send('SERVER IS BROKEN');
         console.error(error);
@@ -67,14 +73,6 @@ app.get('/escola', async (req, res) => {
         console.error(error);
     }
 });
-
-let nomeA = 'varrer a escola';
-let descricaoA = 'varrer com a vassora todos os edificios da esmad';
-let dataI = new Date("2025-05-25");
-let dataF = new Date("2025-05-25");
-let estado = 'PENDENTE'
-
-addActivity(2, 1, nomeA, descricaoA, dataI, dataF, estado);
 
 app.listen(PORT, HOST, (err) => {
     console.log(`YOUR SERVER IS RUNNING AT http://${HOST}:${PORT}`)

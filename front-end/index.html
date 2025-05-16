@@ -8,18 +8,44 @@
 </head>
 <body>
     <form id="myform">
-        <input type="text" id="myId" placeholder="ESCREVE 1">
+        <input type="number" id="myEId" placeholder="ESCREVE 2">
+        <input type="number" id="myAId" placeholder="ESCREVE 1">
+        <input type="text" id="myNome" placeholder="ESCREVE nome">
+        <input type="texto" id="myDesc" placeholder="descricao">
+        <select name="estado" id="myEstado">
+            <option value="PENDENTE">PENDENTE</option>
+            <option value="EM PROGRESSO">EM PROGRESSO</option>
+            <option value="CONCLUIDA">CONCLUIDA</option>
+        </select>
+        <input type="date" id="myDateI" placeholder="ESCREVE 1">
+        <input type="date" id="myDateF" placeholder="ESCREVE 1">
         <button type="submit">SUBMETER</button>
     </form>
     <script>
          document.getElementById('myform').addEventListener('submit', (e) => {
             e.preventDefault();
-            const input = document.getElementById('myId').value;
+            const input1 = document.getElementById('myEId').value;
+            const input2 = document.getElementById('myAId').value;
+            const input3 = document.getElementById('myNome').value;
+            const input4 = document.getElementById('myDesc').value;
+            const input5 = document.getElementById('myEstado').value;
+            const input6 = document.getElementById('myDateI').value;
+            const input7 = document.getElementById('myDateF').value;
 
-            axios.post('http://localhost:3000/api/input', { data: input })
+            const myData = {
+                eid: input1,
+                aid: input2,
+                nome: input3,
+                desc: input4,
+                estado: input5,
+                dateInicio: input6,
+                dateFim: input7
+            };
+            console.log(myData)
+
+            axios.post('http://localhost:3000/api/input', {data: myData})
             .then(res => {console.log(res.data)})
             .catch(err => console.error('anxious error: ', err))
-            console.log(input)
   });
     </script>
 </body>
