@@ -1,4 +1,4 @@
-const {con} = require('../utils/connect');
+const con = require('../connect');
 
 let getAllAtivities = () => {
     return new Promise((resolve, reject) => {
