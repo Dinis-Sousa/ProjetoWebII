@@ -8,49 +8,45 @@ CREATE TABLE Utilizador (
     email VARCHAR(255) NOT NULL,
     passwordHssh VARCHAR(255) NOT NULL,
     perfil ENUM('ADMIN', 'ALUNO', 'COLABORADOR'),
-    dataRegisto DATETIME DEFAULT CURRENT_TIMESTAMP, 
-    FOREIGN KEY (escola_id) REFERENCES Escola(id)
+    dataRegisto DATETIME DEFAULT CURRENT_TIMESTAMP,
+    pontos INT NOT NULL, 
+    FOREIGN KEY (escola_id) REFERENCES escola(escola_id)
 );
 
 CREATE TABLE Atividade (
-    atividade_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    escola_id INT, 
+    atividade_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
     area_id INT,
     nome VARCHAR(255) NOT NULL,
     descriacao TEXT NOT NULL,
     dataInicio DATE NOT NULL,
     dataFim DATE NOT NULL,
     estado ENUM('CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'),
-    FOREIGN kEY (escola_id) REFERENCES Escola(id),
-    FOREIGN KEY (area_id) REFERENCES Area(id),
+    FOREIGN KEY (area_id) REFERENCES AreaTematics(area_id)
 );
 
 CREATE TABLE AreaTematics (
-    areaid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    area_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
     descriacao TEXT NOT NULL
 );
-CREATE TABLE Voluntariado (
-    sessaoid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    escolaid INT,
-    titulo VARCHAR(255) NOT NULL,
-    descriacao TEXT NOT NULL,
-    dataHora TIMESTAMP NOT NULL,
+CREATE TABLE Sessao (
+    sessao_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    atividade_id INT,
+    dataMarcada Date NOT NULL,
+    horaMarcada TIMESTAMP NOT NULL,
     vagas INT NOT NULL,
-    FOREIGN KEY (escolaid) REFERENCES Escola(id),
+    FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id)
 );
 
 CREATE TABLE InscricaoVoluntariado (
-    inscricaoid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    sessaoid INT,
-    userid INT,
-    presente BOOLEAN NOT NULL,
-    FOREIGN KEY (sessaoid) REFERENCES Voluntariado(id),
-    FOREIGN KEY (userid) REFERENCES Utilizador(id),
+    sessao_id INT NOT NULL,
+    user_id INT NOT NULL,
+    presença BOOLEAN NOT NULL,
+    PRIMARY KEY (sessao_id, user_id)
 );
 
 CREATE TABLE Escola (
-    escolaid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    escola_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
     morada VARCHAR(255) NOT NULL,
     codigoPostal VARCHAR(255) NOT NULL,
@@ -60,20 +56,23 @@ CREATE TABLE Escola (
     nivelCertificacao enum('BÁSICO', 'MÉDIO', 'AVANÇADO') NOT NULL
 );
 
-CREATE TABLE Reuniao (
-    reuniaoid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    escolaid INT,
-    titulo VARCHAR(255) NOT NULL,
-    dataHora TIMESTAMP NOT NULL,
-    sitio VARCHAR(255) NOT NULL,
-    convocatoria VARCHAR(255) NOT NULL,
-    FOREIGN KEY (escolaid) REFERENCES Escola(id),
+CREATE TABLE AdesaoAtividade (
+    atividade_id INT NOT NULL,
+    escola_id INT NOT NULL,
+    aderiu BOOLEAN NOT NULL,
+    PRIMARY KEY (atividade_id, escola_id)
 );
 
-CREATE TABLE Ata (
-    ataid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    reuniaoid INT,
-    conteudo VARCHAR(255) NOT NULL,
-    arquipoPath VARCHAR(255) NOT NULL,
-    FOREIGN KEY (reuniaoid) REFERENCES Reuniao(id),
-)
+CREATE TABLE Conquistas (
+    conquista_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    pontosN INT NOT NULL,
+    badge INT NOT NULL
+);
+
+CREATE TABLE ConUser (
+    user_id INT NOT NULL,
+    conquista_id INT NOT NULL,
+    estado BOOLEAN NOT NULL,
+    PRIMARY KEY (user_id, conquista_id)
+);
