@@ -2,8 +2,7 @@ const express = require('express');
 const app = express()
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const {addActivity, getAllAtivities} = require('./models/atividade_models');
-const { getUsers, getAllUsers } = require('./models/user_models');
+require('dotenv').config();
 
 
 let HOST = process.env.HOST || 'localhost';

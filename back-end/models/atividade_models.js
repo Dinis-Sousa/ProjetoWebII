@@ -1,21 +1,42 @@
-const con = require('../connect');
-const ErrorHandler = require('../utils/error')
-
-let getAllAtivities = () => {
-        con.query(`SELECT * FROM Atividade`, (err, results) => {
-            console.log(results)
-            results.forEach(result => {
-                return result
-            });
-        });
-    };
-
-
-let addActivity = (escolaid, areaid, nome, descricao, dataInicio, dataFim, estado) => {
+module.exports = (Sequelize, DataTypes) => {
+    const Atividade = Sequelize.define('atividade', {
+        atividade_id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true 
+        },
+        area_id: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        nome: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        descricao: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        dataInicio: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        dataFim: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        estado: {
+            type: DataTypes.ENUM('CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'),
+            allowNull: true,
+            validate: {
+                isIn: {
+                   args: [['CONCLUIDA', 'EM PROGRESSO', 'PENDENTE']],
+                   msg: "Role must be one of the following: 'CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'"
+                }
+             }
+        },
     
-        con.query(`INSERT INTO Atividade(escola_id, area_id, nome, descricao, dataInicio, dataFim, estado) VALUES(?,?,?,?,?,?,?)`,[escolaid, areaid, nome, descricao, dataInicio, dataFim, estado], (err) => {
-        return console.log('A ATIVIDADE FOI ADICIONADA COM SUCESSO')
-    });
-};
-
-module.exports = {addActivity, getAllAtivities}
+    })
+    return Atividade
+}

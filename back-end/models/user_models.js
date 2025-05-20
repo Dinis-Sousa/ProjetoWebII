@@ -1,25 +1,43 @@
-const con = require('../connect')
+module.exports = (Sequelize, DataTypes) => {
+    const User = Sequelize.define('user', {
+        user_id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true 
+        },
+        nome: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        passwordHssh: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        perfil: {
+            type: DataTypes.ENUM('ADMIN', 'ALUNO', 'COLABORADOR'),
+             allowNull: false,
+             validate: {
+                isIn: {
+                   args: [['ADMIN', 'ALUNO', 'COLABORADOR']],
+                   msg: "Role must be one of the following: ADMIN, ALUNO ou COLABORADOR "
+                }
+             }
+          },
+        
+        dataRegisto: {
+            type: DataTypes.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        },
+        pontos: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
 
-let getAllUsers = () => {
-    return new Promise((resolve, reject) => {
-        con.query(`SELECT * FROM Utilizador`, (err, results) => {
-            if (err) return reject(err);
-            resolve(results);
-        });
-    });
-};
-
-let getUsers = (id) => {
-    return new Promise((resolve, reject) => {
-        con.query(`SELECT * FROM Utilizador WHERE user_id = ?`, [id], (err, results) => {
-            if (err) return reject(err);
-            
-            // Convert RowDataPacket to plain JS object
-            const [plainResults] = results.map(row => ({ ...row }));
-            resolve(plainResults);
-            console.log(plainResults)
-        });
-    });
-};
-
-module.exports = {getAllUsers, getUsers }
+})
+    return User
+}
