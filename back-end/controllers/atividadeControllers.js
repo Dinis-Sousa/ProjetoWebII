@@ -21,6 +21,18 @@ let getAllAtividades = async (req, res, next) => {
     }
 }
 
+let addAtividade = async (req, res, next) => {
+    try {
+        const atividade = await Atividade.create(req.body);
+        res.status(201).json({
+            msg:"atividade criada com sucesso"
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getAllAtividades,
+    addAtividade,
 }

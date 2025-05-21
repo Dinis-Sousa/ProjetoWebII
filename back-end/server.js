@@ -12,6 +12,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
+// middleware for ALL routes
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on("finish", () => { // finish event is emitted once the response is sent to the client
+        const diffSeconds = (Date.now() - start) / 1000; // figure out how many seconds elapsed
+        console.log(`Request: ${req.method} ${req.originalUrl} completed in ${diffSeconds} seconds`);
+    });
+    next()
+})
+
 // Use users routes
 app.get('/users', require('./routes/users.routes'))
 
