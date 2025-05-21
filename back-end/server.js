@@ -12,65 +12,60 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
-app.get('/', async (req, res) => {
-    try {
-        let answer = 'BEM VINDO AO NOSSO SERVIDOR';
-        res.send(answer);
-    } catch (err) {
-        res.status(500).send('SERVER IS BROKEN')
-    }
-})
+// Use users routes
+app.get('/users', require('./routes/users.routes'))
 
-app.get('/users', async (req, res) => {
-    try {
-        const results = await getAllUsers();
-        res.json(results); 
-    } catch (error) {
-        res.status(500).send('SERVER IS BROKEN');
-        console.error(error);
-    }
+// Use atividades routes
+app.get('/atividades', require('./routes/atividade.routes'))
+
+//handle invalid routes (404)    
+app.use((req, res, next) => {
+    res.status(404).json({ message: `The requested resource was not found: ${req.method} ${req.originalUrl}` });
 });
 
-app.post('/api/input', async (req, res) => {
-    let myObj = req.body.data
-    console.log(myObj.nome)
-     try {
-        const results = await addActivity(myObj.eid,myObj.aid, myObj.nome, myObj.desc, myObj.dateInicio, myObj.dateFim, myObj.estado);
-        res.send(results);
-    } catch (err) {
-        console.error(err)
+// error middleware (always at the end of the file)
+app.use((err, req, res, next) => {
+    // !Uncomment this line to log the error details to the server console!
+    console.error(err);
+
+    // error thrown by express.json() middleware when the request body is not valid JSON
+    if (err.type === 'entity.parse.failed')
+        return res.status(400).json({ error: 'Invalid JSON payload! Check if your body data is a valid JSON.' });
+
+    // Sequelize validation errors (ALL models)
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({
+            error: 'Validation error',
+            details: err.errors.map(e => ({
+                field: e.path,
+                message: e.message
+            }))
+        });
     }
-})
 
-app.post('/registar', async (req, res) => {
-    req.body(escola, nome, email, password)
-})
-
-
-app.post('/registarEscola', async (req, res) => {
-    req.body(nome, morada, codigo, local, tele, email, nivel);
-    addSchool(nome, morada, codgo, local, tele, email, nivel);
-    res.send('Escola adicionada');
-})
-
-app.get('/atividade', async (req, res) => {
-    try {
-        const results = await getAllAtivities();
-        res.send(results); 
-    } catch (error) {
-        res.status(500).send('SERVER IS BROKEN');
-        console.error(error);
+    // SequelizeDatabaseError related to an invalid ENUM value (USERS table -> role field)
+    if (err.name === 'SequelizeDatabaseError') {
+        if (err.original.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
+            return res.status(400).json({
+                error: 'Invalid value for enumerated field',
+                message: err.message
+            });
+        }
+        if (err.original.code === 'ER_BAD_NULL_ERROR') {
+            return res.status(400).json({
+                error: 'Missing mandatory field',
+                message: err.message
+            });
+        }
+        if (err.original.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({
+                error: 'Duplicate entry',
+                message: err.message
+            });
+        }
     }
-});
-
-app.get('/escola', async (req, res) => {
-    try {
-        const results = await getAllSchools();
-        res.send(results); 
-    } catch (error) {
-        res.status(500).send('SERVER IS BROKEN');
-        console.error(error);
-    }
+    // other errors
+    res.status(err.statusCode || 500).json({ error: err.message || 'Internal Server Error' });
 });
 
 app.listen(PORT, HOST, (err) => {
