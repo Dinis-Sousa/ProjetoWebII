@@ -20,7 +20,8 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
         }
     }, {
-        tableName: 'sessao'
+        tableName: 'sessao',
+        timestamps: false // Do not add createdAt and updatedAt fields
     })
     return Sessao
 }

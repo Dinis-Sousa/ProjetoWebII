@@ -1,5 +1,5 @@
 const db = require('../models/connect')
-const School = require('../models/school_models')
+const School = db.School
 
 const {ErrorHandler} = require('../utils/error')
 
@@ -20,9 +20,12 @@ let getAllSchool = async (req, res, next) =>{
     }
 }
 
-let addSchool = async (req, res, next) => {
+let addSchool = async (req, res, next) => { 
+    let {nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao} = req.body;
+    let nEscola = {nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao}
+    console.log(nEscola)
     try{
-        const school = await School.create(req.body)
+    await School.create(nEscola);
         res.status(201).json({
             msg: 'Escola foi adicionada com sucesso'
         })

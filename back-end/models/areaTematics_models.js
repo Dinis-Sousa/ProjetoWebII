@@ -16,7 +16,8 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
         }
  }, {
-    tableName: 'areatematics'
+    tableName: 'areatematics',
+    timestamps: false // Do not add createdAt and updatedAt fields
  })
     return Area
 }

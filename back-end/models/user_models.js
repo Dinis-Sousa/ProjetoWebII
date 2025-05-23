@@ -38,7 +38,9 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false
         }
     },
-        {tableName: 'utilizador'
+        {
+            tableName: 'utilizador',
+            timestamps: false // Do not add createdAt and updatedAt fields
 
 })
     return Utilizador

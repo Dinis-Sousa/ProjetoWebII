@@ -22,7 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
     },
-    pontos: {
+    telefone: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -30,9 +30,10 @@ module.exports = (Sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
     },
-    nivelCertificação: {
+    nivelCertificacao: {
         type: DataTypes.ENUM('BÁSICO', 'MÉDIO', 'AVANÇADO'),
         allowNull: false,
+        field: 'nivelCertificacao',
          validate: {
             isIn: {
                args: [['BÁSICO', 'MÉDIO', 'AVANÇADO']],
@@ -41,7 +42,8 @@ module.exports = (Sequelize, DataTypes) => {
          }
     }
  }, {
-    tableName: 'escola'
+    tableName: 'escola',
+    timestamps: false // Do not add createdAt and updatedAt fields
  })
     return School
 }
