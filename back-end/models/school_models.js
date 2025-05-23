@@ -12,11 +12,10 @@ module.exports = (Sequelize, DataTypes) => {
     },
     morada: {
         type: DataTypes.STRING,
-        autoIncrement: false,
-        allowNull: true,
+        allowNull: false
     },
     codigoPostal: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     localidade: {
@@ -41,6 +40,8 @@ module.exports = (Sequelize, DataTypes) => {
             }
          }
     }
-})
+ }, {
+    tableName: 'escola'
+ })
     return School
 }

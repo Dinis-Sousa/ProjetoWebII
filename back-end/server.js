@@ -6,7 +6,7 @@ require('dotenv').config();
 
 
 let HOST = process.env.HOST || 'localhost';
-let PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 5500;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,10 +23,13 @@ app.use((req, res, next) => {
 })
 
 // Use users routes
-app.get('/users', require('./routes/users.routes'))
+app.use('/users', require('./routes/users.routes'))
 
 // Use atividades routes
-app.get('/atividades', require('./routes/atividade.routes'))
+app.use('/atividades', require('./routes/atividade.routes'))
+
+// Use school router
+app.use('/schools', require('./routes/school.routes'))
 
 //handle invalid routes (404)    
 app.use((req, res, next) => {

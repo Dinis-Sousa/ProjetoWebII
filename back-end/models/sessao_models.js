@@ -19,6 +19,8 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         }
-})
+    }, {
+        tableName: 'sessao'
+    })
     return Sessao
 }

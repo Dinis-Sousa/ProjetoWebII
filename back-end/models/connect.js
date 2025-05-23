@@ -1,13 +1,10 @@
 // connect to a MySQL database using Sequelize
-const { Sequelize } = require('sequelize');~
+const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const sequelize = new Sequelize(
-    process.env.DATABASE, process.env.USER, process.env.PASSWORD,
-    {
+const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD,{
         host: process.env.HOST,
         dialect: process.env.DIALECT,
-        port: process.env.PORT,
         // connection pool settings
         pool: {
             max: 5, // maximum number of connections in pool
@@ -33,15 +30,15 @@ const db = {};
 db.sequelize = sequelize;
 
 db.School = require('../models/school_models')(sequelize, Sequelize.DataTypes);
-db.User = require('../models/user_models')(sequelize, Sequelize.DataTypes);
+db.Utilizador = require('../models/user_models')(sequelize, Sequelize.DataTypes);
 db.Atividade = require('../models/atividade_models')(sequelize, Sequelize.DataTypes);
 db.Area = require('./areaTematics_models')(sequelize, Sequelize.DataTypes);
 db.Sessao = require('./sessao_models')(sequelize, Sequelize.DataTypes);
 db.Conquistas = require('./conquistas_models')(sequelize, Sequelize.DataTypes);
 
 // M user 1 School
-db.User.hasOne(db.School, {foreignKey: 'escola_id', allowNull: false, onDelete: 'CASCADE'});
-db.School.belongsTo(db.User, {foreignKey: 'escola_id',  allowNull: false});
+db.Utilizador.hasOne(db.School, {foreignKey: 'escola_id', allowNull: false, onDelete: 'CASCADE'});
+db.School.belongsTo(db.Utilizador, {foreignKey: 'escola_id',  allowNull: false});
 
 // M Atividade 1 Area
 db.Atividade.hasOne(db.Area, {foreignKey: 'area_id', allowNull: false, onDelete: 'CASCADE'});
@@ -60,18 +57,18 @@ db.Area.belongsToMany(db.Atividade, {
 });
 
 // M sessao N users
-db.Sessao.belongsToMany(db.User, {
+db.Sessao.belongsToMany(db.Utilizador, {
     through: 'InscricaoVoluntariado', timestamps: false
 });
-db.User.belongsToMany(db.Sessao, {
+db.Utilizador.belongsToMany(db.Sessao, {
     through: 'InscricaoVoluntariado', timestamps: false
 });
 
 // M conquistas N users
-db.Conquistas.belongsToMany(db.User, {
+db.Conquistas.belongsToMany(db.Utilizador, {
     through: 'conuser', timestamps: false
 });
-db.User.belongsToMany(db.Conquistas, {
+db.Utilizador.belongsToMany(db.Conquistas, {
     through: 'conuser', timestamps: false
 });
 

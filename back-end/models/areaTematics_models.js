@@ -15,6 +15,8 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false,
         }
-})
+ }, {
+    tableName: 'areatematics'
+ })
     return Area
 }
