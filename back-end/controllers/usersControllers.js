@@ -27,7 +27,7 @@ let getSessaoInscritasByUser = async (req, res, next) => {
 let getAllUsers = async (req, res, next) => {
     try {
         const Utilizadores = await User.findAll({
-            attributes: ['user_id', 'escola_id', 'nome','email', 'passwordHssh', 'perfil', 'dataRegisto', 'pontos']
+            attributes: ['user_id', 'escola_id', 'nome','email', 'passwordHash', 'perfil', 'dataRegisto', 'pontos']
         })
         if(!Utilizadores){
             throw new ErrorHandler(404, `Cannot find any USER with ID ${req.body.id}.`)
@@ -42,8 +42,64 @@ let getAllUsers = async (req, res, next) => {
     }
 }
 
+let checkUser = async (req, res, next) => {
+    const {tEmail, passHash} = req.body;
+    try {
+        const [Utilizador] = await User.findAll({
+            where: {
+                email : tEmail
+            }
+        })
+        if(!Utilizador){
+            throw new ErrorHandler(404, 'Nao existe utilizador com esse email')
+        } else {
+            const user1 = Utilizador.dataValues
+            if(user1.passwordHash == passHash){
+                switch(user1.perfil){
+                    case 'ALUNO':
+                        res.status(200).json({
+                            msg: 'Aluno logado'
+                        })
+                    break;
+                    case 'COLABORADOR' :
+                        res.status(200).json({
+                            msg: 'Colaborador logado'
+                        })
+                    break;
+                    case 'ADMIN': 
+                        res.status(200).json({
+                            msg: 'Admin logado'
+                        })
+                    break;
+            }
+        } else {
+            throw new ErrorHandler(404, `Password incorreta!`)
+        }
+    }
+    } catch (err){
+        next(err)
+    }
+}
+
+let addUser = async (req, res, next) => {
+    const {nome, email, passwordHash} = req.body
+    const pontos = 0;
+    const nUserInfo = {nome, email, passwordHash, pontos}
+    console.log(nUserInfo)
+    try {
+        await User.create(nUserInfo)
+        res.status(201).json({
+            msg: 'Utilizador criado com sucesso!'
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getSessaoInscritasByUser,
     getAllUsers,
+    checkUser,
+    addUser,
 }
 

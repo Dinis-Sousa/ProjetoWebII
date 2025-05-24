@@ -14,13 +14,12 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        passwordHssh: {
+        passwordHash: {
             type: DataTypes.STRING,
             allowNull: false
         },
         perfil: {
             type: DataTypes.ENUM('ADMIN', 'ALUNO', 'COLABORADOR'),
-             allowNull: false,
              validate: {
                 isIn: {
                    args: [['ADMIN', 'ALUNO', 'COLABORADOR']],
