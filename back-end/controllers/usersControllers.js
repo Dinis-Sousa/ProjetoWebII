@@ -1,5 +1,6 @@
 const db = require('../models/connect.js'); 
 const User = db.Utilizador; 
+const Sessao = db.Sessao;
 
 
 const { ErrorHandler } = require("../utils/error.js");
@@ -39,6 +40,23 @@ let getAllUsers = async (req, res, next) => {
         });
     } catch (err) {
         next(err);
+    }
+}
+
+let apagarUser = async (req, res, next) => {
+    const {user_id} = req.body
+    let dUser = {user_id}
+    try {
+        await User.destroy({
+            where: {
+                user_id : user_id
+            }
+        })
+        if(!dUser){
+            throw new ErrorHandler(404, `The user with the id ${req.body} doesn't exist`)
+        }
+    } catch (err) {
+        next(err)
     }
 }
 
@@ -96,10 +114,31 @@ let addUser = async (req, res, next) => {
     }
 }
 
+let inscricaoSessao = async (req, res, next) => {
+    const {user_id, sessao_id} = req.body
+    const nInfoIds = {user_id, sessao_id}
+    let getSessaoId = nInfoIds.sessao_id;
+    // let getUserId = nInfoIds.user_id;
+    console.log(getSessaoId)
+    try{
+        const sessao2 = await Sessao.findByPk(getSessaoId)
+        sessao2.vagas--;
+        await sessao2.save();
+        
+        if(!sessao2){
+            throw new ErrorHandler(404, 'sessao nao encontrada')
+        }
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getSessaoInscritasByUser,
     getAllUsers,
     checkUser,
     addUser,
+    apagarUser,
+    inscricaoSessao
 }
 

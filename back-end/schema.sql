@@ -12,10 +12,10 @@ CREATE TABLE Escola (
     nivelCertificacao ENUM('BÁSICO', 'MÉDIO', 'AVANÇADO') NOT NULL
 );
 
-CREATE TABLE AreaTematica (
+CREATE TABLE AreaTematics (
     area_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
-    descriacao TEXT NOT NULL
+    descricao TEXT NOT NULL
 );
 
 CREATE TABLE Utilizador (
@@ -24,9 +24,9 @@ CREATE TABLE Utilizador (
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     passwordHash VARCHAR(255) NOT NULL,
-    perfil ENUM('ADMIN', 'ALUNO', 'COLABORADOR'),
+    perfil ENUM('ADMIN', 'ALUNO', 'COLABORADOR') DEFAULT 'ALUNO',
     dataRegisto DATETIME DEFAULT CURRENT_TIMESTAMP,
-    pontos INT NOT NULL,
+    pontos INT DEFAULT 0,
     FOREIGN KEY (escola_id) REFERENCES Escola(escola_id)
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE Atividade (
     descriacao TEXT NOT NULL,
     dataInicio DATE NOT NULL,
     dataFim DATE NOT NULL,
-    estado ENUM('CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'),
+    estado ENUM('CONCLUIDA', 'EM PROGRESSO', 'PENDENTE') DEFAULT 'PENDENTE',
     FOREIGN KEY (area_id) REFERENCES AreaTematica(area_id)
 );
 
@@ -83,3 +83,18 @@ CREATE TABLE ConUser (
     FOREIGN KEY (user_id) REFERENCES Utilizador(user_id),
     FOREIGN KEY (conquista_id) REFERENCES Conquistas(conquista_id)
 );
+
+INSERT INTO Escola(nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao)
+VALUES('Escola Superior de Media Artes e Design', 'Rua Dom Sancho 981', '4480-876', 'Vila do Conde', '252 291 700', 'geral@esmad.ipp.pt', 'AVANÇADO');
+
+INSERT INTO AreaTematics(nome, descricao)
+VALUES('AMBIENTE', 'Tipo de atividade que evitam que o ambiente piore');
+
+INSERT INTO Utilizador(escola_id, nome, email, passwordHash, perfil)
+VALUES(1, 'admin', 'admin@gmail.com', 'admin123', 'ADMIN');
+
+INSERT INTO Atividade(area_id, nome, descricao, dataInicio, dataFim)
+VALUES(1, 'Limpar a escola', 'Limpar o lixo da faculdade', '2025-05-26', '2025-05-27');
+
+INSERT INTO Sessao(atividade_id, dataMarcada, horaMarcada, vagas)
+VALUES(1, '2025-05-27', '14:00:00', 100);
