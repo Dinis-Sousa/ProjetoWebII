@@ -53,7 +53,7 @@ CREATE TABLE Sessao (
 CREATE TABLE InscricaoVoluntariado (
     sessao_id INT NOT NULL,
     user_id INT NOT NULL,
-    presença BOOLEAN NOT NULL,
+    presenca BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (sessao_id, user_id),
     FOREIGN KEY (sessao_id) REFERENCES Sessao(sessao_id),
     FOREIGN KEY (user_id) REFERENCES Utilizador(user_id)
@@ -62,7 +62,7 @@ CREATE TABLE InscricaoVoluntariado (
 CREATE TABLE AdesaoAtividade (
     atividade_id INT NOT NULL,
     escola_id INT NOT NULL,
-    aderiu BOOLEAN NOT NULL,
+    ADD COLUMN aderiu BOOLEAN DEFAULT TRUE;
     PRIMARY KEY (atividade_id, escola_id),
     FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id),
     FOREIGN KEY (escola_id) REFERENCES Escola(escola_id)

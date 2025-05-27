@@ -37,6 +37,12 @@ app.use('/sessao', require('./routes/Session.routes'))
 // Use Areas router
 app.use('/Area', require('./routes/Area.routes'))
 
+// Use Inscricao router
+app.use('/inscricao', require('./routes/Inscricao.routes'))
+
+// Use Adesao router
+app.use('/Adesoes', require('./routes/adesaoAtividade.routes'))
+
 //handle invalid routes (404)    
 app.use((req, res, next) => {
     res.status(404).json({ message: `The requested resource was not found: ${req.method} ${req.originalUrl}` });

@@ -3,7 +3,9 @@ const router = express.Router();
 
 const atividadeController = require('../controllers/atividadeControllers.js');
 
-router.get('/', atividadeController.getAllAtividades); // get all sessoes from a user
-router.post('/', atividadeController.addAtividade); // adiciona uma atividade
+router.get('/', atividadeController.getAllAtividades); 
+router.post('/', atividadeController.addAtividade);
+router.patch('/', atividadeController.alterarEstado)
+router.delete('/', atividadeController.apagarAtividade)
 
 module.exports = router;

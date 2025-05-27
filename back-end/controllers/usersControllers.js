@@ -1,27 +1,40 @@
+const e = require('express');
 const db = require('../models/connect.js'); 
 const User = db.Utilizador; 
-const Sessao = db.Sessao;
+const School = db.School;
+const InscritosSessao = db.InscritosSessao;
 
 
 const { ErrorHandler } = require("../utils/error.js");
 
 let getSessaoInscritasByUser = async (req, res, next) => {
+    const user_id = req.params.id
+    console.log(user_id)
     try {
-        const user = await findUserByPK(req.params.id, {
-            attributes: ['id', 'user', 'perfil']
+        const userName = await User.findOne({
+            attributes : ['nome'],
+            where: {
+                user_id : user_id
+            }
         })
-        if(!user){
-            throw new ErrorHandler(404, `Cannot find any USER with ID ${req.params.id}.`)
+        if(!userName){
+            throw new ErrorHandler(404, 'Utilizador nao encontrado')
         }
-        const sessoes = await  user.getsessoes()
-
-        user.dataValues.sessoes = sessoes; // add posts to the user object
-
+        let ArrayOfSessions = await InscritosSessao.findAll({
+            attributes : ['sessao_id', 'user_id', 'presenca'],
+            where : {
+                user_id : user_id
+            }
+        })
+        if(!ArrayOfSessions){
+            throw new ErrorHandler(404, `Sessoes nao encontradas do user ${userName}`)
+        }
+        const plainSessions = ArrayOfSessions.map(sessao => sessao.get({plain:true}));
         return res.status(200).json({
-            data: user
-        });
+            data: plainSessions
+        })
     } catch (err) {
-        next(err);
+        next(err)
     }
 }
 
@@ -44,17 +57,16 @@ let getAllUsers = async (req, res, next) => {
 }
 
 let apagarUser = async (req, res, next) => {
-    const {user_id} = req.body
-    let dUser = {user_id}
+    const user_id = req.body
     try {
         await User.destroy({
             where: {
                 user_id : user_id
             }
         })
-        if(!dUser){
-            throw new ErrorHandler(404, `The user with the id ${req.body} doesn't exist`)
-        }
+        res.status(204).json({
+            msg: 'UTLIZADOR APAGADA COM SUCESSO'
+        })
     } catch (err) {
         next(err)
     }
@@ -100,35 +112,33 @@ let checkUser = async (req, res, next) => {
 }
 
 let addUser = async (req, res, next) => {
-    const {nome, email, passwordHash} = req.body
-    const pontos = 0;
-    const nUserInfo = {nome, email, passwordHash, pontos}
-    console.log(nUserInfo)
+    const {nome, email, passwordHash, escola} = req.body
+    const myInfoObj = {nome, email, passwordHash, escola};
+    console.log(myInfoObj.nome)
+    mySchoolName = myInfoObj.escola
     try {
-        await User.create(nUserInfo)
-        res.status(201).json({
-            msg: 'Utilizador criado com sucesso!'
+        const schoolID = await School.findAll({
+            attributes: ['escola_id'],
+            where : {
+                nome : mySchoolName}
         })
-    } catch (err) {
-        next(err)
-    }
-}
-
-let inscricaoSessao = async (req, res, next) => {
-    const {user_id, sessao_id} = req.body
-    const nInfoIds = {user_id, sessao_id}
-    let getSessaoId = nInfoIds.sessao_id;
-    // let getUserId = nInfoIds.user_id;
-    console.log(getSessaoId)
-    try{
-        const sessao2 = await Sessao.findByPk(getSessaoId)
-        sessao2.vagas--;
-        await sessao2.save();
-        
-        if(!sessao2){
-            throw new ErrorHandler(404, 'sessao nao encontrada')
+        if(!schoolID){
+            throw new ErrorHandler(404, `The school you wrote isn't in our database`)
         }
-    } catch (err) {
+        let escola_id = schoolID[0].dataValues.escola_id
+        const pontos = 0;
+        const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
+        console.log(nUserInfo)
+        try {
+            await User.create(nUserInfo)
+            res.status(201).json({
+                msg: 'Utilizador criado com sucesso!'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+     catch (err) {
         next(err)
     }
 }
@@ -139,6 +149,5 @@ module.exports = {
     checkUser,
     addUser,
     apagarUser,
-    inscricaoSessao
 }
 

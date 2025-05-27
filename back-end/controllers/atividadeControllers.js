@@ -6,15 +6,14 @@ const { ErrorHandler } = require("../utils/error.js");
 
 let getAllAtividades = async (req, res, next) => {
     try {
-        const Atividade = await Atividade.findAll({
-            attributes: ['atividade_id', 'area_id', 'nome','descrição', 'dataInicio', 'dataFim', 'estado']
+        const Atividades = await Atividade.findAll({
+            attributes: ['atividade_id', 'area_id', 'nome','descricao', 'dataInicio', 'dataFim', 'estado']
         })
-        if(!Atividade){
-            throw new ErrorHandler(404, `Cannot find any USER with ID ${req.body.id}.`)
+        if(!Atividades){
+            throw new ErrorHandler(404, 'Atividade nao existem!')
         }
-
         return res.status(200).json({
-            data: Atividade
+            data: Atividades
         });
     } catch (err) {
         next(err);
@@ -22,10 +21,52 @@ let getAllAtividades = async (req, res, next) => {
 }
 
 let addAtividade = async (req, res, next) => {
+    const {nome, descricao, dataInicio, dataFim} = req.body
+    const myInfo = {nome, descricao, dataInicio, dataFim}
     try {
-        const atividade = await Atividade.create(req.body);
+        await Atividade.create(myInfo);
         res.status(201).json({
             msg:"atividade criada com sucesso"
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+let apagarAtividade = async (req, res, next) => {
+    const {atividade_id} = req.body
+    console.log(atividade_id)
+    try {
+        await Atividade.destroy({
+            where: {
+                atividade_id : atividade_id
+            }
+        })
+        return res.status(204).json({
+            msg: 'Atividade apagada com sucesso'
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+let alterarEstado = async (req, res, next) => {
+    const {atividade_id, estado} = req.body
+    const newInfo = {atividade_id, estado}
+    try {
+        const NAtividade = await Atividade.findOne({
+            where : {
+                atividade_id : newInfo.atividade_id
+            }
+        })
+        if(!Atividade){
+            throw new ErrorHandler(404, 'Nao foi encontrada a atividade desejada!')
+        }
+        NAtividade.estado = newInfo.estado
+        await NAtividade.save()
+
+        res.status(200).json({
+            msg: "estado atulizado",
+            estado: NAtividade.estado
         });
     } catch (err) {
         next(err)
@@ -35,4 +76,6 @@ let addAtividade = async (req, res, next) => {
 module.exports = {
     getAllAtividades,
     addAtividade,
+    alterarEstado,
+    apagarAtividade
 }

@@ -34,8 +34,25 @@ let addSchool = async (req, res, next) => {
     }
 }
 
+let apagarSchool = async (req, res, next) => {
+    let school_id = req.params.id
+    try {
+        await School.destroy({
+            where : {
+                escola_id : school_id
+            }
+        })
+        res.status(204).json({
+            msg: 'ESCOLA APAGADA COM SUCESSO'
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 
 module.exports = {
     getAllSchool, 
     addSchool,
+    apagarSchool
 }

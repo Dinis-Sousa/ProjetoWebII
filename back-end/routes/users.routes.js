@@ -7,7 +7,6 @@ router.get('/:id/sessoes', usersController.getSessaoInscritasByUser); // get all
 router.get('/', usersController.getAllUsers);
 router.post('/login', usersController.checkUser);
 router.post('/registar', usersController.addUser);
-router.delete('/', usersController.apagarUser);
-router.patch('/', usersController.inscricaoSessao)                                              
+router.delete('/', usersController.apagarUser);                                        
 
 module.exports = router;

@@ -32,7 +32,7 @@ module.exports = (Sequelize, DataTypes) => {
             validate: {
                 isIn: {
                    args: [['CONCLUIDA', 'EM PROGRESSO', 'PENDENTE']],
-                   msg: "Role must be one of the following: 'CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'"
+                   msg: "Tens de escolher entre estes 3 estados: 'CONCLUIDA', 'EM PROGRESSO', 'PENDENTE'"
                 }
              }
         },
