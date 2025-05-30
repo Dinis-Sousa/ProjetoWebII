@@ -26,19 +26,16 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users.routes'))
 
 // Use atividades routes
-app.use('/atividades', require('./routes/atividade.routes'))
+app.use('/ativities', require('./routes/atividade.routes'))
 
 // Use school router
 app.use('/schools', require('./routes/school.routes'))
 
 // Use Sessions router
-app.use('/sessao', require('./routes/Session.routes'))
+app.use('/sessions', require('./routes/Session.routes'))
 
 // Use Areas router
-app.use('/Area', require('./routes/Area.routes'))
-
-// Use Inscricao router
-app.use('/inscricao', require('./routes/Inscricao.routes'))
+app.use('/areas', require('./routes/Area.routes'))
 
 // Use Adesao router
 app.use('/Adesoes', require('./routes/adesaoAtividade.routes'))

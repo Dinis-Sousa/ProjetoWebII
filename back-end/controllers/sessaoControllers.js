@@ -44,19 +44,14 @@ let addSessao = async (req, res, next) =>{
 }
 
 let apagarSessao = async (req, res, next) => {
-    let {horaMarcada} = req.body
-    let dSessao = {horaMarcada}
+    const sessao_id = req.params.sessao_id
     try {
         await Sessao.destroy({
             where: {
-                horaMarcada : dSessao.horaMarcada
+                sessao_id : sessao_id
                 
             }
-        })
-        if(!dSessao){
-            throw new ErrorHandler(404, 'Sessao inexistente')
-        }
-        
+        })        
        res.status(204).json({
         msg: 'a sua sessao foi apagada',
        })

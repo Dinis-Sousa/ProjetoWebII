@@ -21,7 +21,8 @@ let getAllAdesoes = async (req, res, next) => {
 }
 
 let addAdesao = async (req, res, next) => {
-    const {atividade_id, escola_id} = req.body
+    const atividade_id = req.params.atividade_id;
+    const escola_id = req.params.escola_id;
     const newInfo = {atividade_id, escola_id}
     try {  
         const atividadeName = await Atividade.findOne({

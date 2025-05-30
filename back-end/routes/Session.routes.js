@@ -5,6 +5,6 @@ const SessaoControllers = require('../controllers/sessaoControllers')
 
 router.get('/', SessaoControllers.getAllSessions)
 router.post('/', SessaoControllers.addSessao)
-router.delete('/', SessaoControllers.apagarSessao)
+router.delete('/:id', SessaoControllers.apagarSessao)
 
 module.exports = router

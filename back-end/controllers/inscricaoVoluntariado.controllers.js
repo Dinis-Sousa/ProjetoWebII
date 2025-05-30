@@ -4,12 +4,16 @@ const Utilizador = db.Utilizador;
 
 const { ErrorHandler } = require("../utils/error.js");
 
-let gettAllInscricoes = async (req, res, next) => {
-    const {sessao_id, user_id} = req.body
-    const myInfo = {sessao_id, user_id}
+let getTheRegistration = async (req, res, next) => {
+    const user_id = req.params.user_id
+    const sessao_id = req.params.sessao_id
     try {
         const Inscricoes = await InscritosSessao.findAll({
-            attributes : ['sessao_id', 'user_id', 'presenca']
+            attributes : ['sessao_id', 'user_id', 'presenca'],
+            where : {
+                sessao_id : sessao_id,
+                user_id : user_id
+            }
         })
         if(!Inscricoes){
             throw new ErrorHandler(404, `nao foram encontradas sessoes`)
@@ -23,7 +27,8 @@ let gettAllInscricoes = async (req, res, next) => {
 
 
 let inscrever = async (req, res, next) => {
-    const {sessao_id, user_id} = req.body
+    const user_id = req.params.user_id
+    const sessao_id = req.params.sessao_id
     const myInfo = {sessao_id, user_id}
     try {
         const userName = await Utilizador.findOne({
@@ -54,7 +59,9 @@ let removerInscricao = async (req, res, next) => {
                 user_id : user_id
             }
         })
-        res.status(204)
+        res.status(204).json({
+            msg: 'Inscrição do user removida!'
+        })
     } catch (err) {
         next(err)
     }
@@ -63,7 +70,8 @@ let removerInscricao = async (req, res, next) => {
 
     
 let marcarPresenca = async (req, res, next) => {
-      const { sessao_id, user_id } = req.body;
+      const user_id = req.params.user_id;
+      const sessao_id = req.params.sessao_id;
     try {
         const inscricao = await InscritosSessao.findOne({
             where: {
@@ -92,6 +100,6 @@ let marcarPresenca = async (req, res, next) => {
 module.exports = {
     marcarPresenca,
     inscrever,
-    gettAllInscricoes,
+    getTheRegistration,
     removerInscricao,
 }

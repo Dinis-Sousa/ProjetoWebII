@@ -44,7 +44,7 @@ let getAllUsers = async (req, res, next) => {
             attributes: ['user_id', 'escola_id', 'nome','email', 'passwordHash', 'perfil', 'dataRegisto', 'pontos']
         })
         if(!Utilizadores){
-            throw new ErrorHandler(404, `Cannot find any USER with ID ${req.body.id}.`)
+            throw new ErrorHandler(404, `There are no users!`)
         }
         const plainUsers = Utilizadores.map(user => user.get({ plain: true }));
 

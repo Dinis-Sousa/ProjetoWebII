@@ -23,7 +23,7 @@ module.exports = (Sequelize, DataTypes) => {
              validate: {
                 isIn: {
                    args: [['ADMIN', 'ALUNO', 'COLABORADOR']],
-                   msg: "Role must be one of the following: ADMIN, ALUNO ou COLABORADOR "
+                   msg: "O tipo de utilizador tem de pertencer a um destes 3: ADMIN, ALUNO ou COLABORADOR "
                 }
              }
           },
@@ -39,7 +39,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
         {
             tableName: 'utilizador',
-            timestamps: false // Do not add createdAt and updatedAt fields
+            timestamps: false 
 
 })
     return Utilizador
