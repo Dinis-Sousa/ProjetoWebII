@@ -54,7 +54,9 @@ let addAdesao = async (req, res, next) => {
 }
 
 let apagarAdesao = async (req, res, next) => {
-    const {atividade_id, escola_id} = req.body
+    const atividade_id = req.params.atividade_id;
+    const escola_id = req.params.escola_id;
+    const newInfo = {atividade_id, escola_id}
     try {
         await AdesaoAtividade.destroy({
             where : {
@@ -70,8 +72,72 @@ let apagarAdesao = async (req, res, next) => {
     }
 }
 
+let escolasPorAtividade = async (req, res, next) => {
+    const atividade_id = req.params.atividade_id;
+    let names = [];
+    try {
+        let allSchools = await AdesaoAtividade.findAll({
+            attributes: ['escola_id', 'aderiu'],
+            where: { atividade_id : atividade_id }
+        });
+
+        for (const school of allSchools) {
+            let escolaID = school.dataValues;
+            try {
+                let SchoolsName = await School.findAll({
+                    attributes: ['nome'],
+                    where: { escola_id: escolaID.escola_id }
+                });
+                SchoolsName.forEach(nome => {
+                    names.push(nome.dataValues);
+                });
+            } catch (err) {
+                return next(err);
+            }
+        }
+
+        res.status(200).json(names);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+let ativitiesBySchool = async (req, res, next) => {
+    const escola_id = req.params.escola_id;
+    let names = [];
+    try {
+        let allAtivities = await AdesaoAtividade.findAll({
+            attributes: ['atividade_id', 'aderiu'],
+            where: { escola_id : escola_id }
+        });
+
+        for (const ativity of allAtivities) {
+            let ativityID = ativity.dataValues;
+            try {
+                let AtivitiesNames = await Atividade.findAll({
+                    attributes: ['nome'],
+                    where: { atividade_id: ativityID.atividade_id }
+                });
+                AtivitiesNames.forEach(nome => {
+                    names.push(nome.dataValues);
+                });
+            } catch (err) {
+                return next(err);
+            }
+        }
+
+        res.status(200).json(names);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getAllAdesoes,
     addAdesao,
     apagarAdesao,
+    escolasPorAtividade,
+    ativitiesBySchool
 }

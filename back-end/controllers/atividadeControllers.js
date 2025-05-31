@@ -1,5 +1,6 @@
 const db = require('../models/connect.js'); 
-const Atividade = db.Atividade; 
+const Atividade = db.Atividade;
+const Sessao = db.Sessao 
 
 
 const { ErrorHandler } = require("../utils/error.js");
@@ -73,9 +74,30 @@ let alterarEstado = async (req, res, next) => {
     }
 }
 
+let getSessionsByAtivity = async (req, res, next) => {
+    const {atividade_id} = req.params.id
+    try {
+        const Sessions = Sessao.findAll({
+            attributes : ['sessao_id', 'atividade_id', 'dataMarcada', 'horaMarcada', 'vagas'],
+            where : {
+                atividade_id : atividade_id
+            }
+        })
+        if(!Sessions) {
+            throw new ErrorHandler(404, 'nao foram encontradas sessões desta Atividade')
+        }
+        return res.status(200).json({
+            data: Sessions
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getAllAtividades,
     addAtividade,
     alterarEstado,
-    apagarAtividade
+    apagarAtividade,
+    getSessionsByAtivity
 }

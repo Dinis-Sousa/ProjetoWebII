@@ -7,8 +7,12 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true 
         },
+        atividade_id : {
+            type: DataTypes.INTEGER,
+            
+        },
         dataMarcada: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
         horaMarcada: {
