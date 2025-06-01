@@ -51,12 +51,13 @@ let apagarAtividade = async (req, res, next) => {
 }
 
 let alterarEstado = async (req, res, next) => {
-    const {atividade_id, estado} = req.body
-    const newInfo = {atividade_id, estado}
+    const atividade_id = req.params.atividade_id
+    const {estado} = req.body
+    const newInfo = {estado}
     try {
         const NAtividade = await Atividade.findOne({
             where : {
-                atividade_id : newInfo.atividade_id
+                atividade_id : atividade_id
             }
         })
         if(!Atividade){
