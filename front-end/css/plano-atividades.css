@@ -227,7 +227,6 @@ table {
   color: #333;
 }
 
-/* Animação de entrada suave */
 @keyframes fade-in {
   0% {
     opacity: 0;
@@ -239,7 +238,7 @@ table {
   }
 }
 
-/* Estilo comum das secções novas */
+
 .objetivos,
 .impacto,
 .sugestoes,
@@ -250,7 +249,7 @@ table {
   border-radius: 10px;
 }
 
-/* OBJETIVOS */
+
 .objetivos {
   background-color: #e7f3ff;
 }
@@ -279,7 +278,6 @@ table {
   line-height: 1.6;
 }
 
-/* IMPACTO */
 .impacto {
   background-color: #f5faff;
 }
@@ -308,7 +306,6 @@ table {
   line-height: 1.5;
 }
 
-/* SUGESTÕES */
 .sugestoes {
   background-color: #f0fbe5;
 }
@@ -336,7 +333,6 @@ table {
   color: #333;
 }
 
-/* TESTEMUNHOS */
 .testemunhos {
   background-color: #fff8e1;
 }
