@@ -6,7 +6,7 @@ const inscricaoVoluntariadoControllers = require('../controllers/inscricaoVolunt
 
 
 router.get('/:user_id/sessions/:sessao_id', inscricaoVoluntariadoControllers.getTheRegistration);
-router.post('/:user_id/sessions/:sessao_id', inscricaoVoluntariadoControllers.inscrever);
+router.put('/:user_id/sessions/:sessao_id', inscricaoVoluntariadoControllers.inscrever);
 router.patch('/:user_id/sessions/:sessao_id', inscricaoVoluntariadoControllers.marcarPresenca);
 router.delete('/:user_id/sessions/:sessao_id', inscricaoVoluntariadoControllers.removerInscricao)
 router.get('/:id/sessions', usersController.getSessaoInscritasByUser); // get all sessoes from a user
