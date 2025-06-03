@@ -47,3 +47,20 @@ function animarContador(contador) {
   document.querySelectorAll('.contador').forEach(contador => {
     observer.observe(contador);
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const lista = document.getElementById("lista-participantes");
+
+
+//  const participantes = [ ]; acho que nao queres isto ent yha
+
+  participantes.forEach(participante => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${participante.nome}</span>
+      <span>${participante.presencas} presenças</span>
+    `;
+    lista.appendChild(li);
+  });
+});
