@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco-Escolas - Administração</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container navbar-container">
+      <div class="logo">Eco-Escolas</div>
+      <nav>
+        <ul class="list">
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="plano-atividades.html">Plano de Atividades</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="background-blur"></div>
+  <main class="container">
+
+    <section class="tabela-container">
+      <h1>Gestão de Utilizadores</h1>
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- exemplo pa dps apagares dinis -->
+          <tr>
+            <td>1</td>
+            <td>Joana Silva</td>
+            <td>joana@eco.pt</td>
+            <td>Colaborador</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-apagar">Apagar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="tabela-container">
+      <h1>Gestão de Atividades</h1>
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Área</th>
+            <th>Estado</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- so exemplo -->
+          <tr>
+            <td>3</td>
+            <td>Plantação de Árvores</td>
+            <td>Ambiental</td>
+            <td>Concluída</td>
+            <td>2025-04-02</td>
+            <td>2025-04-10</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-apagar">Apagar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="tabela-container">
+      <h1>Gestão de Sessões</h1>
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Atividade</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Vagas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- depois podes apagar dinis -->
+          <tr>
+            <td>7</td>
+            <td>3</td>
+            <td>2025-04-05</td>
+            <td>10:00</td>
+            <td>25</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-apagar">Apagar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="dashboard">
+        <h1>Dashboard de Monitorização</h1>
+        <div class="cards-dashboard">
+        <div class="card-metrica">
+            <h2>🎯 Atividades Concluídas</h2>
+            <p id="atividades-concluidas">0</p>
+        </div>
+        <div class="card-metrica">
+            <h2>📷 Fotos Partilhadas</h2>
+            <p id="fotos-partilhadas">0</p>
+        </div>
+        <div class="card-metrica">
+            <h2>📊 Progresso Geral</h2>
+            <p id="progresso-geral">0%</p>
+        </div>
+        <div class="card-metrica">
+            <h2>🌿 Áreas Abrangidas</h2>
+            <p id="areas-abrangidas">0</p>
+        </div>
+        </div>
+    </section>
+
+    <section class="relatorio-final">
+        <h1>Relatório Final</h1>
+        <p>Podes gerar um relatório consolidado com base nas atividades e sessões registadas.</p>
+        <button class="btn-enviar" onclick="gerarRelatorioPDF()">📄 Gerar PDF</button>
+    </section>
+
+    <section class="gamificacao">
+     <h1>Sistema de Gamificação</h1>
+     <div class="ranking">
+            <h2>🏆 Ranking Semanal</h2>
+        <ol id="ranking-alunos">
+            <li>Joana P. – 12 presenças</li>
+            <li>Rui M. – 10 presenças</li>
+            <li>Inês T. – 8 presenças</li>
+        </ol>
+     </div>
+
+  <div class="nivel-escola">
+    <h2>🎖 Nível da Escola</h2>
+    <p id="nivel-projeto">Prata</p>
+  </div>
+</section>
+
+
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-conteudo">
+      <div class="footer-esquerda">
+        <img src="assets/logo-ecoescolas.png" alt="Eco-Escolas" class="footer-logo">
+        <span class="footer-nome">Eco-Escolas</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Início</a>
+        <a href="about.html">Sobre</a>
+        <a href="plano-atividades.html">Atividades</a>
+        <a href="login.html">Login</a>
+      </div>
+      <div class="footer-redes">
+        <a href="#"><img src="assets/icon-facebook.png" alt="Facebook"></a>
+        <a href="#"><img src="assets/icon-twitter.png" alt="Twitter"></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="ano-atual"></span> Eco-Escolas. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+    
+  <script src="js/admin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    document.getElementById("ano-atual").textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
