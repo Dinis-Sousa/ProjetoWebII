@@ -6,7 +6,7 @@ const adesaoAtividadeControllers = require('../controllers/adesaoAtividadeContro
 
 router.delete('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.apagarAdesao)
 router.get('/:atividade_id/schools', adesaoAtividadeControllers.escolasPorAtividade)
-router.post('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.addAdesao)
+router.put('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.addAdesao)
 router.get('/schools', adesaoAtividadeControllers.getAllAdesoes)
 router.get('/:id/sessions', atividadeController.getSessionsByAtivity)
 router.get('/', atividadeController.getAllAtividades); 
