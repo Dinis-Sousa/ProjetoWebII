@@ -64,3 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
     lista.appendChild(li);
   });
 });
+
+
+document.querySelectorAll('.acordeao-titulo').forEach(botao => {
+  botao.addEventListener('click', () => {
+    const conteudo = botao.nextElementSibling;
+
+    botao.classList.toggle('active');
+
+    if (conteudo.style.maxHeight) {
+      conteudo.style.maxHeight = null;
+    } else {
+      conteudo.style.maxHeight = conteudo.scrollHeight + "px";
+    }
+  });
+});
+
