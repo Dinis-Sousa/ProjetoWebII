@@ -39,6 +39,7 @@
     <section id="lista-atividades" class="lista-atividades">
       <h1>Atividades Planeadas</h1>
       <table>
+        <thead>
           <tr>
             <th>Nome</th>
             <th>Área</th>
@@ -47,6 +48,10 @@
             <th>Fim</th>
             <th>Estado</th>
           </tr>
+        </thead>
+        <tbody id="ativityTBody">
+
+        </tbody>    
       </table>
     </section>
     <section id="lista-atividades" class="lista-atividades">
@@ -54,15 +59,14 @@
       <table>
         <thead>
           <tr>
-            <th>Nome</th>
-            <th>Área</th>
-            <th>Recursos</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Ações</th>
+            <th>Sessao</th>
+            <th>atividade_id</th>
+            <th>data Marcada</th>
+            <th>hora Marcada</th>
+            <th>Vagas</th>
           </tr>
         </thead>
-        <tbody id="myTBody">
+        <tbody id="sessionTBody">
 
         </tbody>
       </table>
@@ -159,5 +163,51 @@
   </main>
 
   <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+  <script>
+    const myTBody = document.getElementById('ativityTBody')
+    const myTBody1 = document.getElementById('sessionTBody')
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAtivities()
+      loadSessions()
+    })
+    let loadAtivities = async () => {
+      let atividades = await axios.get('http://localhost:5500/atividades')
+      const array = atividades.data
+      console.log(array)
+      array.forEach(atividade => {
+        console.log(atividade)
+        let card = `
+          <tr>
+            <td>${atividade.nome}</td>
+            <td>${atividade.area_id}</td>
+            <td>${atividade.descricao}</td>
+            <td>${atividade.dataInicio}</td>
+            <td>${atividade.dataFim}</td>
+            <td>${atividade.estado}</td>
+            </tr>
+        `
+        myTBody.innerHTML += card
+      })
+    }
+    let loadSessions = async () => {
+      let sessoes = await axios.get('http://localhost:5500/sessao')
+      const array = sessoes.data
+      console.log(array)
+      array.forEach(sessao => {
+        console.log(sessao)
+        let card = `
+          <tr>
+            <td>${sessao.sessao_id}</td>
+            <td>${sessao.atividade_id}</td>
+            <td>${sessao.dataMarcada}</td>
+            <td>${sessao.horaMarcada}</td>
+            <td>${sessao.Vagas}</td>
+            </tr>
+        `
+        myTBody1.innerHTML += card
+      })
+    }
+  </script>
 </body>
 </html>
