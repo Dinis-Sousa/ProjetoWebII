@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', () => {
+  loadUsers()
+})
+
 function gerarRelatorioPDF() {
   const doc = new jsPDF();
 
@@ -12,3 +16,30 @@ function gerarRelatorioPDF() {
 
   doc.save("Relatorio_EcoEscolas.pdf");
 }
+
+const usersTBody = document.getElementById('usersTBody');
+
+let loadUsers = async () => {
+      let Utilizadores = await axios.get('http://localhost:5500/users')
+      const array = Utilizadores.data
+      console.log(array)
+      array.forEach(user => {
+        let card = `
+          <tr>
+            <td>${user.user_id}</td>
+            <td>${user.escola_id}</td>
+            <td>${user.nome}</td>
+            <td>${user.email}</td>
+            <td>${user.passwordHash}</td>
+            <td>${user.perfil}</td>
+            <td>${user.dataRegisto }</td>
+            <td>${user.pontos}</td>
+            <td>
+              <button class="btn-editar">Editar</button>
+              <button class="btn-apagar">Apagar</button>
+            </td>
+            </tr>
+        `
+        usersTBody.innerHTML += card
+      })
+    }

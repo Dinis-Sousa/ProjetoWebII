@@ -46,11 +46,8 @@ let getAllUsers = async (req, res, next) => {
         if(!Utilizadores){
             throw new ErrorHandler(404, `Cannot find any USER with ID ${req.body.id}.`)
         }
-        const plainUsers = Utilizadores.map(user => user.get({ plain: true }));
 
-        return res.status(200).json({
-            data: plainUsers
-        });
+        return res.status(200).json(Utilizadores);
     } catch (err) {
         next(err);
     }

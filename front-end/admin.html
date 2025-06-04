@@ -30,25 +30,19 @@
       <table class="tabela">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Id</th>
+            <th>Escola_id</th>
             <th>Nome</th>
             <th>Email</th>
-            <th>Tipo</th>
+            <th>Password</th>
+            <th>Perfil</th>
+            <th>Data de Registo</th>
+            <th>Pontos</th>
             <th>Ações</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="usersTBody">
           <!-- exemplo pa dps apagares dinis -->
-          <tr>
-            <td>1</td>
-            <td>Joana Silva</td>
-            <td>joana@eco.pt</td>
-            <td>Colaborador</td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-apagar">Apagar</button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </section>
@@ -188,8 +182,10 @@
     
   <script src="js/admin.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
   <script>
     document.getElementById("ano-atual").textContent = new Date().getFullYear();
+    const usersTBody = document.getElementById('usersTBody');
   </script>
 
 </body>
