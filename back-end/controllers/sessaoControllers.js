@@ -8,16 +8,12 @@ const { ErrorHandler } = require("../utils/error.js");
 let getAllSessions = async (req, res, next) => {
     try {
         const Sessions = await Sessao.findAll({
-            attributes: ['sessao_id','dataMarcada', 'horaMarcada', 'Vagas']
+            attributes: ['sessao_id', 'atividade_id','dataMarcada', 'horaMarcada', 'Vagas']
         })
         if(!Sessions){
             throw new ErrorHandler(404, 'Cannot find the data requested')
         }
-        const plainSessions = Sessions.map(session => session.get({ plain: true }));
-        console.log(plainSessions)
-        return res.status(200).json({
-            data: plainSessions
-        })
+        return res.status(200).json(Sessions)
     } catch (err) {
         next(err)
     }
