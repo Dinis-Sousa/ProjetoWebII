@@ -47,12 +47,13 @@ let getAllUsers = async (req, res, next) => {
             throw new ErrorHandler(404, `There are no users!`)
         }
         const plainUsers = Utilizadores.map(user => user.get({ plain: true }));
+        console.log(plainUsers)
 
         return res.status(200).json({
             data: plainUsers
         });
     } catch (err) {
-        next(err);
+        console.error(err);
     }
 }
 
@@ -65,7 +66,7 @@ let apagarUser = async (req, res, next) => {
             }
         })
         res.status(204).json({
-            msg: 'UTLIZADOR APAGADA COM SUCESSO'
+            msg: 'UTLIZADOR APAGADO COM SUCESSO'
         })
     } catch (err) {
         next(err)
