@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "selenium-webdriver": "^4.33.0"
+  },
+  "type" : "module",
+    "scripts" : {
+      "test" : "node index.test.js"
+  }
+}
