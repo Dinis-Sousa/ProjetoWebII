@@ -1,4 +1,4 @@
-import { getAllUsers } from '../controllers/usersControllers';
+const { getAllUsers, checkUser, addUser , apagarUser ,getSessaoInscritasByUser  } =  require('../controllers/usersControllers');
 
 test('get an array of all users stored in database', async () => {
     const result = await getAllUsers()
