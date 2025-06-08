@@ -10,7 +10,7 @@ let getAllAtividades = async (req, res, next) => {
         const Atividades = await Atividade.findAll({
             attributes: ['atividade_id', 'area_id', 'nome','descricao', 'dataInicio', 'dataFim', 'estado']
         })
-        if(!Atividades){
+        if(!Atividades || Atividades.length === 0){
             throw new ErrorHandler(404, 'Atividade nao existem!')
         }
         return res.status(200).json({

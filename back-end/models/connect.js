@@ -15,6 +15,7 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.
     }
 );
 
+if(process.env.NODE_ENV !== 'test'){
 (async () => {
     try {
         await sequelize.authenticate();
@@ -25,7 +26,7 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.
     }
 }
 )();
-
+}
 const db = {};
 db.sequelize = sequelize;
 
