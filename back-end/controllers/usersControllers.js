@@ -30,9 +30,7 @@ let getSessaoInscritasByUser = async (req, res, next) => {
             throw new ErrorHandler(404, `Sessoes nao encontradas do user ${userName}`)
         }
         const plainSessions = ArrayOfSessions.map(sessao => sessao.get({plain:true}));
-        return res.status(200).json({
-            data: plainSessions
-        })
+        return res.status(200).json(plainSessions)
     } catch (err) {
         next(err)
     }

@@ -51,7 +51,8 @@ let inscrever = async (req, res, next) => {
 }
 
 let removerInscricao = async (req, res, next) => {
-    const {sessao_id, user_id} = req.body
+    const user_id = req.params.user_id;
+    const sessao_id = req.params.sessao_id;
     try {
         await InscritosSessao.destroy({
             where: {
@@ -97,9 +98,47 @@ let marcarPresenca = async (req, res, next) => {
     }
 }
 
+let listOfUsersBySession = async (req, res, next) => {
+    const sessao_id = req.params.sessao_id
+    class Person  {
+        constructor(nome, presenca) {
+        this.nome = nome;
+        this.presenca = presenca;
+    }
+    }
+    try{
+        const Users = await InscritosSessao.findAll({
+            attributes : ['user_id', 'presenca'],
+            where: {
+                sessao_id : sessao_id
+            }
+        });
+        if(!Users || Users.length === 0){
+            throw new ErrorHandler(404, 'Não há users inscritos nesta sessão')
+        }
+
+        let ArrayOfUsers = []
+        
+        for(let user in Users){
+            const userName = await Utilizador.findOne({
+            attributes : ['nome'],
+            where: {
+                user_id : Users[user].user_id
+            }
+        });
+        let newObj = new Person(userName.nome, Users[user].presenca)
+        ArrayOfUsers.push(newObj)
+    }
+        res.status(200).json(ArrayOfUsers)
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     marcarPresenca,
     inscrever,
     getTheRegistration,
     removerInscricao,
+    listOfUsersBySession,
 }
