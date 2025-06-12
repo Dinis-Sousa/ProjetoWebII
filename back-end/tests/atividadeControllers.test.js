@@ -1,10 +1,4 @@
-const {
-    getAllAtividades,
-    addAtividade,
-    alterarEstado,
-    apagarAtividade,
-    getSessionsByAtivity
-} = require('../controllers/atividadeControllers.js');
+const {getAllAtividades,addAtividade,alterarEstado,apagarAtividade,getSessionsByAtivity} = require('../controllers/atividadeControllers.js');
 
 const db = require('../models/connect');
 const { ErrorHandler } = require('../utils/error');
