@@ -1,4 +1,5 @@
 const e = require('express');
+const jwt = require('jsonwebtoken');
 const db = require('../models/connect.js'); 
 const User = db.Utilizador; 
 const School = db.School;
@@ -84,6 +85,13 @@ let checkUser = async (req, res, next) => {
         } else {
             const user1 = Utilizador.dataValues
             if(user1.passwordHash == passHash){
+                const secretKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30';
+                const payload = {
+                        email: tEmail,
+                        password: passHash
+                        };
+            const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+            console.log('JWT:', token);
                 switch(user1.perfil){
                     case 'ALUNO':
                         res.status(200).json({
