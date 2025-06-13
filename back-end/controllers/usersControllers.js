@@ -1,6 +1,7 @@
 const e = require('express');
 const jwt = require('jsonwebtoken');
-const db = require('../models/connect.js'); 
+const db = require('../models/connect.js');
+require('dotenv').config(); 
 const User = db.Utilizador; 
 const School = db.School;
 const InscritosSessao = db.InscritosSessao;
@@ -45,12 +46,8 @@ let getAllUsers = async (req, res, next) => {
         if(!Utilizadores){
             throw new ErrorHandler(404, `There are no users!`)
         }
-        const plainUsers = Utilizadores.map(user => user.get({ plain: true }));
-        console.log(plainUsers)
 
-        return res.status(200).json({
-            data: plainUsers
-        });
+        return res.status(200).json(Utilizadores);
     } catch (err) {
         console.error(err);
     }
@@ -85,27 +82,29 @@ let checkUser = async (req, res, next) => {
         } else {
             const user1 = Utilizador.dataValues
             if(user1.passwordHash == passHash){
-                const secretKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30';
+                const secretKey = process.env.JWT_SECRET;
                 const payload = {
-                        email: tEmail,
-                        password: passHash
+                        user_id : user1.user_id
                         };
             const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
             console.log('JWT:', token);
                 switch(user1.perfil){
                     case 'ALUNO':
                         res.status(200).json({
-                            msg: 'Aluno logado'
+                            msg: 'Aluno logado',
+                            token: token
                         })
                     break;
                     case 'COLABORADOR' :
                         res.status(200).json({
-                            msg: 'Colaborador logado'
+                            msg: 'Colaborador logado',
+                            token: token
                         })
                     break;
                     case 'ADMIN': 
                         res.status(200).json({
-                            msg: 'Admin logado'
+                            msg: 'Admin logado',
+                            token: token
                         })
                     break;
             }

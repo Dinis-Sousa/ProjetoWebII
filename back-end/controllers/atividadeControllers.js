@@ -13,9 +13,7 @@ let getAllAtividades = async (req, res, next) => {
         if(!Atividades || Atividades.length === 0){
             throw new ErrorHandler(404, 'Atividade nao existem!')
         }
-        return res.status(200).json({
-            data: Atividades
-        });
+        return res.status(200).json(Atividades);
     } catch (err) {
         next(err);
     }
