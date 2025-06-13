@@ -4,59 +4,66 @@ import chrome from 'selenium-webdriver/chrome.js';
 async function main() {
   const driver = await new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options()) // Add `.headless()` here if you want headless mode
+    .setChromeOptions(new chrome.Options()) // Add `.headless()` here for headless mode
     .build();
 
   try {
     // Step 1: Open the local site
     await driver.get('http://localhost:5500/front-end/plano-atividades.html');
 
-    // Helper to scroll down and up
+    // Helper: Scroll down and then up
     async function scrollDownUp() {
-      // Scroll down by 500px
-      await driver.executeScript('window.scrollBy(0, 500);');
-      await driver.sleep(1000); // wait 2 seconds
-      await driver.executeScript('window.scrollBy(0, 500);');
-      await driver.sleep(1000); // wait 2 seconds
-      await driver.executeScript('window.scrollBy(0, 500);');
-      await driver.sleep(1000); // wait 2 seconds
+      const scrollPause = 1000;
 
-      // Scroll up by 500px
-      await driver.executeScript('window.scrollBy(0, -500);');
-      await driver.executeScript('window.scrollBy(0, -500);');
-      await driver.executeScript('window.scrollBy(0, -500);');
+      for (let i = 0; i < 3; i++) {
+        await driver.executeScript('window.scrollBy(0, 500);');
+        await driver.sleep(scrollPause);
+      }
+
+      for (let i = 0; i < 3; i++) {
+        await driver.executeScript('window.scrollBy(0, -500);');
+        await driver.sleep(scrollPause);
+      }
     }
 
     // Step 2: Navigate through anchors
 
     // Click "Dashboard"
-    const dashboardAnchor = await driver.findElement(By.linkText('Dashboard'));
-    console.log("➡️ switching to Dashboard");
+    const dashboardAnchor = await driver.wait(
+      until.elementLocated(By.linkText('Dashboard')),
+      5000
+    );
+    console.log("➡️ Switching to Dashboard");
     await dashboardAnchor.click();
-    await scrollDownUp(); // Await scrolling after click
+    await driver.sleep(1000);
+    await scrollDownUp();
 
     // Click "Plano de Atividades"
-    const planoAnchor = await driver.findElement(By.linkText('Plano de Atividades'));
-    console.log("➡️ switching to Plano de Atividades");
+    const planoAnchor = await driver.wait(
+      until.elementLocated(By.linkText('Plano de Atividades')),
+      5000
+    );
+    console.log("➡️ Switching to Plano de Atividades");
     await planoAnchor.click();
     await driver.sleep(1000);
 
     // Click "About"
-    const aboutAnchor = await driver.findElement(By.linkText('About'));
-    console.log("➡️ switching to About");
+    const aboutAnchor = await driver.wait(
+      until.elementLocated(By.linkText('About')),
+      5000
+    );
+    console.log("➡️ Switching to About");
     await aboutAnchor.click();
+    await driver.sleep(1000);
     await scrollDownUp();
-    
-    console.log('✅ The test passed')
 
-
-  } catch (err){
-    console.error('❌ The test failed')
+    console.log('✅ The test passed');
+  } catch (err) {
+    console.error('❌ The test failed');
+    console.error(err); 
   } finally {
-    // Step 3: Quit the browser
     await driver.quit();
   }
 }
 
 main();
-
