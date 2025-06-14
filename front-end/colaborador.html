@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco-Escolas - Plano de Atividades</title>
+  <link rel="stylesheet" href="css/colaborador.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container navbar-container">
+      <div class="logo">Eco-Escolas</div>
+      <nav>
+        <ul class="list">
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="plano-atividades.html">Plano de Atividades</a></li>
+          <li><a href="about.html" class="active">About</a></li>
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+<div class="background-blur"></div>
+  <main class="container">
+
+  <div class="atividades">
+    <h1>Plano de Atividades</h1>
+
+    <form id="formAtividade" class="form-table">
+      <div class="form-group">
+        <label for="nome-atividade">Nome da Atividade:</label>
+        <input type="text" id="nomeAtividade" name="nome" required />
+      </div>
+    
+      <div class="form-group">
+        <label for="descricao-atividade">Descriçao da Atividade:</label>
+        <input type="text" id="descricaoAtividade" name="descricao" required />
+      </div>
+
+      <div class="form-group">
+        <label for="area-atividade">Área:</label>
+        <select id="areaAtividade" name="area" required>
+          <option value="">Selecionar área</option>
+          <option value="AMBIENTE">AMBIENTE</option>
+          <option value="Limpeza">Limpeza</option>
+          <option value="plantação">plantação</option>
+          <option value="Saúde">Saúde</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="recursos-atividade">Estado:</label>
+        <input type="text" id="estadoAtividade" name="recursos" placeholder="'PENDENTE, EM PROGRESSO, CONCLUIDA"/>
+      </div>
+
+      <div class="form-group">
+        <label for="data-inicio">Data de Início:</label>
+        <input type="date" id="dataInicio" name="dataInicio" required />
+      </div>
+
+      <div class="form-group">
+        <label for="data-fim">Data de Fim:</label>
+        <input type="date" id="dataFim" name="dataFim" required />
+      </div>
+
+      <button type="submit" class="btn-enviar">Adicionar Atividade</button>
+    </form>
+  </div>
+
+  <div class="sessoes">
+    <h1>Plano de Sessões</h1>
+
+    <form id="form-sessao" class="form-table">
+      <div class="form-group">
+        <label for="atividade-id">ID da Atividade:</label>
+        <input type="text" id="atividade-id" name="atividade_id" required />
+      </div>
+
+      <div class="form-group">
+        <label for="data-marcada">Data Marcada:</label>
+        <input type="date" id="data-marcada" name="dataMarcada" required />
+      </div>
+
+      <div class="form-group">
+        <label for="hora-marcada">Hora Marcada:</label>
+        <input type="time" id="hora-marcada" name="horaMarcada" required />
+      </div>
+
+      <div class="form-group">
+        <label for="vagas">Vagas:</label>
+        <input type="number" id="vagas" name="vagas" min="1" required />
+      </div>
+
+      <button type="submit" class="btn-enviar">Adicionar Sessão</button>
+    </form>
+  </div>
+
+<section class="tabela-container">
+  <h1>Lista de Atividades</h1>
+  <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Área</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Estado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="ativitiesTBody">
+        </tbody>
+      </table>
+</section>
+
+<section class="tabela-container">
+  <h1>Lista de Sessões</h1>
+  <table class="tabela">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Atividade</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Vagas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="sessionsTBody">
+        </tbody>
+      </table>
+</section>
+
+<section class="tabela-container">
+  <h1>Presenças</h1>
+
+  <label for="selecionar-sessao">Selecionar Sessão:</label>
+  <select id="selecionarSessao">
+  </select>
+
+  <table class="tabela" id="tabela-presencas">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Presente</th>
+      </tr>
+    </thead>
+    <tbody id="corpoPresente">
+    </tbody>
+  </table>
+
+  <button id="guardar-presencas" class="btn-enviar" style="margin-top: 20px;">Guardar Presenças</button>
+</section>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+<script src="./js/colaborador.js" defer></script>
+</body>
+</html>
