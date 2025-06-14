@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../models/connect.js');
 require('dotenv').config(); 
 const User = db.Utilizador; 
-const School = db.School;
 const InscritosSessao = db.InscritosSessao;
 
 
@@ -115,8 +114,24 @@ let checkUser = async (req, res, next) => {
 
 let addUser = async (req, res, next) => {
     const {nome, email, passwordHash, escola_id} = req.body
+    let pontos = 0;
     try {
-        const nUserInfo = {escola_id, nome, email, passwordHash}
+        if(!email.endsWith("@gmail.com")){
+            throw new ErrorHandler(401, `Tem de utilizar um email!`)
+        }
+        let allUsers = await User.findAll({
+            attributes : [`email`]
+        })
+        allEmails = []
+        for (let user in allUsers){
+            allEmails.push(allUsers[user].dataValues)
+        }
+        for(let i = 0; i < allEmails.length; i++){
+            if(email == allEmails[i].email){
+                throw new ErrorHandler(401, `Já existe uma conta associada a esse email!`)
+            }
+        }
+        const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
         await User.create(nUserInfo)
         res.status(201).json({
             msg: 'Utilizador criado com sucesso!'

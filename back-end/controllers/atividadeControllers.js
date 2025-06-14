@@ -20,8 +20,9 @@ let getAllAtividades = async (req, res, next) => {
 }
 
 let addAtividade = async (req, res, next) => {
-    const {nome, descricao, area, estado, dataInicio, dataFim} = req.body
-    const myInfo = {nome, descricao, area, estado, dataInicio, dataFim}
+    const {nome, descricao, area_id, dataInicio, dataFim, estado} = req.body
+    const myInfo = {nome, descricao, area_id, dataInicio, dataFim, estado}
+    console.log(myInfo)
     try {
         await Atividade.create(myInfo);
         res.status(201).json({

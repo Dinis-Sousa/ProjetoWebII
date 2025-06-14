@@ -1,6 +1,7 @@
 const db = require('../models/connect.js')
 const InscritosSessao = db.InscritosSessao;
 const Utilizador = db.Utilizador;
+const Sessao = db.Sessao;
 
 const { ErrorHandler } = require("../utils/error.js");
 
@@ -40,11 +41,19 @@ let inscrever = async (req, res, next) => {
         if(!userName){
             throw new ErrorHandler(404, `O utlizador nao existe`)
         }
-
+        const removerVaga = await Sessao.findOne({
+            where : {
+                sessao_id : sessao_id
+            }
+        })
+        
         await InscritosSessao.create(myInfo)
         res.status(201).json({
             msg: `o user ${userName.dataValues.nome} está inscrito nesta sessao!`
         })
+        removerVaga.vagas -= 1;
+        console.log(removerVaga.vagas)
+        await removerVaga.save()
     } catch (err) {
         next(err)
     }
@@ -60,9 +69,18 @@ let removerInscricao = async (req, res, next) => {
                 user_id : user_id
             }
         })
+        const removerVaga = await Sessao.findOne({
+            where : {
+                sessao_id : sessao_id
+            }
+        })
+
         res.status(204).json({
             msg: 'Inscrição do user removida!'
         })
+        removerVaga.vagas += 1;
+        console.log(removerVaga.vagas)
+        await removerVaga.save()
     } catch (err) {
         next(err)
     }
@@ -101,7 +119,8 @@ let marcarPresenca = async (req, res, next) => {
 let listOfUsersBySession = async (req, res, next) => {
     const sessao_id = req.params.sessao_id
     class Person  {
-        constructor(nome, presenca) {
+        constructor(user_id, nome, presenca) {
+        this.user_id = user_id;
         this.nome = nome;
         this.presenca = presenca;
     }
@@ -126,7 +145,7 @@ let listOfUsersBySession = async (req, res, next) => {
                 user_id : Users[user].user_id
             }
         });
-        let newObj = new Person(userName.nome, Users[user].presenca)
+        let newObj = new Person(Users[user].user_id, userName.nome, Users[user].presenca)
         ArrayOfUsers.push(newObj)
     }
         res.status(200).json(ArrayOfUsers)
