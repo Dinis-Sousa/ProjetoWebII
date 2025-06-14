@@ -78,7 +78,7 @@ let checkUser = async (req, res, next) => {
             }
         })
         if(!Utilizador){
-            throw new ErrorHandler(404, 'Nao existe utilizador com esse email')
+            throw new ErrorHandler(401, 'Nao existe utilizador com esse email')
         } else {
             const user1 = Utilizador.dataValues
             if(user1.passwordHash == passHash){
@@ -109,7 +109,7 @@ let checkUser = async (req, res, next) => {
                     break;
             }
         } else {
-            throw new ErrorHandler(404, `Password incorreta!`)
+            throw new ErrorHandler(401, `Password incorreta!`)
         }
     }
     } catch (err){
