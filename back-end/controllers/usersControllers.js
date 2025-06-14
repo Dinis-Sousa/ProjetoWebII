@@ -79,7 +79,8 @@ let checkUser = async (req, res, next) => {
             if(user1.passwordHash == passHash){
                 const secretKey = process.env.JWT_SECRET;
                 const payload = {
-                        user_id : user1.user_id
+                        user_id : user1.user_id,
+                        perfil : user1.perfil
                         };
             const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
             console.log('JWT:', token);

@@ -84,10 +84,10 @@ INSERT INTO AreaTematics(nome, descricao)
 VALUES('Limpeza', 'Tipo de atividade que limpem zonas');
 
 INSERT INTO Utilizador(escola_id, nome, email, passwordHash, perfil)
-VALUES(1, 'admin', 'admin@gmail.com', 'admin123', 'ADMIN');
+VALUES(1, 'Admin', 'admin@gmail.com', 'Esmad', 'ADMIN');
 
 INSERT INTO Utilizador(escola_id, nome, email, passwordHash, perfil)
-VALUES(1, 'dinis', 'dinis@gmail.com', 'dinis123', 'aluno');
+VALUES(1, 'User', 'user@gmail.com', 'Esmad', 'aluno');
 
 INSERT INTO Utilizador(escola_id, nome, email, passwordHash, perfil)
 VALUES(2, 'chico', 'chico@gmail.com', 'chico123', 'colaborador');

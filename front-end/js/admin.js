@@ -47,7 +47,12 @@ function gerarRelatorioPDF() {
     })
   }
   let deleteUser = async (id) => {
-    await axios.delete(`http://localhost:5500/users/${id}`)
+    const token = sessionStorage.getItem('Token');
+    await axios.delete(`http://localhost:5500/users/${id}`, {
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    })
     alert('User apagado com sucesso!')
     await loadUsers();
   }

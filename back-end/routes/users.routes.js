@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../utils/auth.js')
 
 const usersController = require('../controllers/usersControllers.js');
 const inscricaoVoluntariadoControllers = require('../controllers/inscricaoVoluntariado.controllers.js')
@@ -13,6 +14,6 @@ router.get('/:id/sessions', usersController.getSessaoInscritasByUser); // get al
 router.get('/', usersController.getAllUsers);
 router.post('/login', usersController.checkUser);
 router.post('/', usersController.addUser);
-router.delete('/:user_id', usersController.apagarUser);                                        
+router.delete('/:user_id', authenticateToken, usersController.apagarUser);                                        
 
 module.exports = router;
