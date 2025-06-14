@@ -81,10 +81,27 @@ let addArea = async (req, res, next) => {
     }
 }
 
+let getAreaIdByName = async (req, res, next) => {
+    const nome = req.params.nome
+    console.log(nome)
+    try{
+        const area_id = await Area.findOne({
+            attributes: ['area_id'],
+            where: {
+                nome: nome
+            }
+        })
+        res.status(200).json(area_id)
+    } catch (err){
+        next(err)
+    }
+}
+
 module.exports = {
     getAllAreas,
     getAtivitiesByArea,
     deleteArea,
     addArea,
-    getSpecificArea
+    getSpecificArea,
+    getAreaIdByName
 }

@@ -55,8 +55,8 @@ CREATE TABLE InscricaoVoluntariado (
     user_id INT NOT NULL,
     presenca BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (sessao_id, user_id),
-    FOREIGN KEY (sessao_id) REFERENCES Sessao(sessao_id),
-    FOREIGN KEY (user_id) REFERENCES Utilizador(user_id)
+    FOREIGN KEY (sessao_id) REFERENCES Sessao(sessao_id) ON DELETE Cascade,
+    FOREIGN KEY (user_id) REFERENCES Utilizador(user_id) ON DELETE Cascade
 );
 
 CREATE TABLE AdesaoAtividade (
@@ -64,24 +64,8 @@ CREATE TABLE AdesaoAtividade (
     escola_id INT NOT NULL,
     aderiu BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (atividade_id, escola_id),
-    FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id),
-    FOREIGN KEY (escola_id) REFERENCES Escola(escola_id)
-);
-
-CREATE TABLE Conquistas (
-    conquista_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    nome VARCHAR(255) NOT NULL,
-    pontosN INT NOT NULL,
-    badge INT NOT NULL
-);
-
-CREATE TABLE ConUser (
-    user_id INT NOT NULL,
-    conquista_id INT NOT NULL,
-    estado BOOLEAN NOT NULL,
-    PRIMARY KEY (user_id, conquista_id),
-    FOREIGN KEY (user_id) REFERENCES Utilizador(user_id),
-    FOREIGN KEY (conquista_id) REFERENCES Conquistas(conquista_id)
+    FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id) ON DELETE Cascade,
+    FOREIGN KEY (escola_id) REFERENCES Escola(escola_id) ON DELETE Cascade
 );
 
 INSERT INTO Escola(nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao)

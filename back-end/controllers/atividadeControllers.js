@@ -20,8 +20,8 @@ let getAllAtividades = async (req, res, next) => {
 }
 
 let addAtividade = async (req, res, next) => {
-    const {nome, descricao, dataInicio, dataFim} = req.body
-    const myInfo = {nome, descricao, dataInicio, dataFim}
+    const {nome, descricao, area, estado, dataInicio, dataFim} = req.body
+    const myInfo = {nome, descricao, area, estado, dataInicio, dataFim}
     try {
         await Atividade.create(myInfo);
         res.status(201).json({
@@ -93,10 +93,30 @@ let getSessionsByAtivity = async (req, res, next) => {
     }
 }
 
+let getAtivityNameById = async (req, res, next) => {
+    const {atividade_id} = req.params.atividade_id;
+    try {
+        const nameAtivity = findOne({
+            attributes: ['nome'],
+            where: {
+                atividade_id : atividade_id
+            }
+        })
+        if(!nameAtivity){
+            throw new ErrorHandler(404, 'Atividade com esse id não encontrada!')
+        }
+
+        res.statusCode(200).json(nameAtivity)
+    } catch(err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getAllAtividades,
     addAtividade,
     alterarEstado,
     apagarAtividade,
-    getSessionsByAtivity
+    getSessionsByAtivity,
+    getAtivityNameById
 }

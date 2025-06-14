@@ -11,6 +11,7 @@ router.get('/schools', adesaoAtividadeControllers.getAllAdesoes)
 router.get('/:id/sessions', atividadeController.getSessionsByAtivity)
 router.get('/', atividadeController.getAllAtividades); 
 router.post('/', atividadeController.addAtividade);
+router.get('/atividade_id', atividadeController.getAtivityNameById)
 router.patch('/:atividade_id', atividadeController.alterarEstado)
 router.delete('/', atividadeController.apagarAtividade)
 

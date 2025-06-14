@@ -51,7 +51,7 @@ db.Area.belongsTo(db.Atividade, {foreignKey: 'area_id',  allowNull: false});
 db.Sessao.hasOne(db.Atividade, {foreignKey: 'atividade_id', allowNull: false, onDelete: 'CASCADE'});
 db.Atividade.belongsTo(db.Sessao, {foreignKey: 'atividade_id',  allowNull: false});
 
-// M atividade N area
+// M atividade N School
 db.Atividade.belongsToMany(db.School, {
     through: db.AdesaoAtividade,  foreignKey: 'atividade_id', otherKey : 'escola_id', timestamps: false
 });
@@ -61,10 +61,10 @@ db.School.belongsToMany(db.Atividade, {
 
 // M sessao N users
 db.Sessao.belongsToMany(db.Utilizador, {
-    through: db.InscritosSessao, foreignKey: 'sessao_id', otherKey : 'user_id', timestamps: false
+    through: db.InscritosSessao, foreignKey: 'sessao_id', otherKey : 'user_id', timestamps: false, onDelete: 'CASCADE'
 });
 db.Utilizador.belongsToMany(db.Sessao, {
-    through: db.InscritosSessao, foreignKey: 'user_id', otherKey : 'sessao_id',  timestamps: false
+    through: db.InscritosSessao, foreignKey: 'user_id', otherKey : 'sessao_id',  timestamps: false,onDelete: 'CASCADE'
 });
 
 // M conquistas N users

@@ -5,16 +5,11 @@ const {ErrorHandler} = require('../utils/error')
 
 let getAllSchool = async (req, res, next) =>{
     try { 
-        const Schools = await School.findAll({
-            attributes: ['escola_id','nome', 'morada', 'codigoPostal', 'localidade', 'telefone', 'email', 'nivelCertificacao']
-        })
+        const Schools = await School.findAll()
         if(!Schools){
             return new ErrorHandler(404, `Cannot find the data requested`)
         }
-        const plainSchools = Schools.map(school => school.get({ plain: true }));
-        return res.status(200).json({
-            data: plainSchools
-        })
+        return res.status(200).json(Schools)
     } catch (err){
         next(err);
     }

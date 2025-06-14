@@ -13,6 +13,6 @@ router.get('/:id/sessions', usersController.getSessaoInscritasByUser); // get al
 router.get('/', usersController.getAllUsers);
 router.post('/login', usersController.checkUser);
 router.post('/', usersController.addUser);
-router.delete('/', usersController.apagarUser);                                        
+router.delete('/:user_id', usersController.apagarUser);                                        
 
 module.exports = router;

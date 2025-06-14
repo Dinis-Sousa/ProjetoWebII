@@ -40,9 +40,7 @@ let getSessaoInscritasByUser = async (req, res, next) => {
 
 let getAllUsers = async (req, res, next) => {
     try {
-        const Utilizadores = await User.findAll({
-            attributes: ['user_id', 'escola_id', 'nome','email', 'passwordHash', 'perfil', 'dataRegisto', 'pontos']
-        })
+        const Utilizadores = await User.findAll()
         if(!Utilizadores){
             throw new ErrorHandler(404, `There are no users!`)
         }
@@ -54,16 +52,14 @@ let getAllUsers = async (req, res, next) => {
 }
 
 let apagarUser = async (req, res, next) => {
-    const user_id = req.body
+    const user_id = req.params.user_id
     try {
         await User.destroy({
             where: {
                 user_id : user_id
             }
         })
-        res.status(204).json({
-            msg: 'UTLIZADOR APAGADO COM SUCESSO'
-        })
+        res.status(204).send();
     } catch (err) {
         next(err)
     }
@@ -118,31 +114,13 @@ let checkUser = async (req, res, next) => {
 }
 
 let addUser = async (req, res, next) => {
-    const {nome, email, passwordHash, escola} = req.body
-    const myInfoObj = {nome, email, passwordHash, escola};
-    console.log(myInfoObj.nome)
-    mySchoolName = myInfoObj.escola
+    const {nome, email, passwordHash, escola_id} = req.body
     try {
-        const schoolID = await School.findAll({
-            attributes: ['escola_id'],
-            where : {
-                nome : mySchoolName}
-        })
-        if(!schoolID){
-            throw new ErrorHandler(404, `The school you wrote isn't in our database`)
-        }
-        let escola_id = schoolID[0].dataValues.escola_id
-        const pontos = 0;
-        const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
-        console.log(nUserInfo)
-        try {
-            await User.create(nUserInfo)
-            res.status(201).json({
-                msg: 'Utilizador criado com sucesso!'
-            })
-        } catch (err) {
-            next(err)
-        }
+        const nUserInfo = {escola_id, nome, email, passwordHash}
+        await User.create(nUserInfo)
+        res.status(201).json({
+            msg: 'Utilizador criado com sucesso!'
+        })    
     }
      catch (err) {
         next(err)
