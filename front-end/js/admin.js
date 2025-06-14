@@ -29,6 +29,7 @@ function gerarRelatorioPDF() {
     let loadUsers = async () => {
       const Users = await axios.get('http://localhost:5500/users');
       const array = Users.data
+      UsersTBody.innerHTML = '';
       array.forEach(user => {
         let card = `
           <tr>
@@ -48,6 +49,7 @@ function gerarRelatorioPDF() {
   let deleteUser = async (id) => {
     await axios.delete(`http://localhost:5500/users/${id}`)
     alert('User apagado com sucesso!')
+    await loadUsers();
   }
 
   let loadAtivities = async () => {

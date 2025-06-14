@@ -1,3 +1,4 @@
+import jwt_decode from "https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.esm.js";
 document.addEventListener("DOMContentLoaded", () => {
   const links = document.querySelectorAll('.menu a');
   const currentPage = window.location.pathname.split("/").pop();
@@ -72,7 +73,6 @@ const myTBody = document.getElementById('ativityTBody')
     let loadAtivities = async () => {
       let atividades = await axios.get('http://localhost:5500/ativities')
       const array = atividades.data
-      console.log(array)
       array.forEach(atividade => {
         let card = `
           <tr>
@@ -88,10 +88,10 @@ const myTBody = document.getElementById('ativityTBody')
       })
     }
     let loadSessions = async () => {
+      myTBody1.innerHTML = '';
       let sessoes = await axios.get('http://localhost:5500/sessions')
       const array = sessoes.data
       array.forEach(sessao => {
-        console.log(sessao)
         let card = `
           <tr>
             <td>${sessao.sessao_id}</td>
@@ -99,9 +99,42 @@ const myTBody = document.getElementById('ativityTBody')
             <td>${sessao.dataMarcada}</td>
             <td>${sessao.horaMarcada}</td>
             <td>${sessao.Vagas}</td>
+            <td>
+            <button class="styleBtn" onclick="registerInSession(${sessao.sessao_id})">Inscrever-me</button>
+            <button class="styleBtn" onclick="removeRegister(${sessao.sessao_id})">Remover Inscrição</button>
+            </td>
             </tr>
         `
         myTBody1.innerHTML += card
       })
     }
+
+    let registerInSession = async (id) => {
+        const token = sessionStorage.getItem('Token');
+        const decode = jwt_decode(token);
+        const user_id = decode.user_id;
+        await axios.put(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+        .then(async res => {
+          await loadSessions()
+        })
+    }
+    
+    let removeRegister = async (id) => {
+      const token = sessionStorage.getItem('Token');
+      const decode = jwt_decode(token);
+      const user_id = decode.user_id;
+      await axios.delete(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+      .then(async res => {
+        await loadSessions()
+      })
+    }
+    
+    
+        document.getElementById('logOutBtn').addEventListener('click', () => {
+          sessionStorage.removeItem('Token');
+        })
+        
+    window.registerInSession = registerInSession
+    window.removeRegister = removeRegister
+
 

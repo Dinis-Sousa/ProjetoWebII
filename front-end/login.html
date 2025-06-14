@@ -42,11 +42,9 @@
   </div>
   <script>
     const myform = document.getElementById('myform');
-    const mymail = document.getElementById('mymail');
-    const myPass = document.getElementById('myPass');
     myform.addEventListener('submit', () => {
-      let myMail = mymail.value;
-      let myPassword = myPass.value;
+      let myMail = document.getElementById('mymail').value;
+      let myPassword = document.getElementById('myPass').value;
 
       const clientInfo = {
         tEmail : myMail,
@@ -55,7 +53,8 @@
 
       axios.post('http://localhost:5500/users/login', clientInfo)
       .then(res => {
-        console.log('sucess', res.data)
+        const token = res.data.token;
+        sessionStorage.setItem('Token', token)
         window.location.href = 'index.html';
       })
       .catch(err => {

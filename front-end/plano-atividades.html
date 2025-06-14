@@ -18,7 +18,7 @@
           <li><a href="index.html">Dashboard</a></li>
           <li><a href="plano-atividades.html">Plano de Atividades</a></li>
           <li><a href="about.html" class="active">About</a></li>
-          <li><a href="#">Logout</a></li>
+          <li><a id="logOutBtn" href="login.html">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -64,6 +64,7 @@
             <th>data Marcada</th>
             <th>hora Marcada</th>
             <th>Vagas</th>
+            <th>Inscrever-me</th>
           </tr>
         </thead>
         <tbody id="sessionTBody">
@@ -163,6 +164,21 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
-  <script src="js/main.js"></script>
+  <script type="module" src="js/main.js" defer></script>
 </body>
 </html>
+<style>
+  .styleBtn{
+    border-radius: 50px;
+    background-color: white;
+    color: blue;
+    font-weight: bold;
+    padding: 10px;
+  }
+  .styleBtn:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+    background-color: blue;
+    color: white;
+  }
+</style>

@@ -16,7 +16,7 @@
           <li><a href="index.html">Dashboard</a></li>
           <li><a href="plano-atividades.html">Plano de Atividades</a></li>
           <li><a href="about.html" class="active">About</a></li>
-          <li><a href="#">Logout</a></li>
+          <li><a id="logOutBtn" href="login.html">Logout</a></li>
         </ul>
       </nav>
     </div>
@@ -50,8 +50,13 @@
       </div>
 
       <div class="form-group">
-        <label for="recursos-atividade">Estado:</label>
-        <input type="text" id="estadoAtividade" name="recursos" placeholder="'PENDENTE, EM PROGRESSO, CONCLUIDA"/>
+        <label for="estadoAtividade">Estado:</label>
+        <select id="estadoAtividade" name="estado" required>
+          <option value="">Selecionar estado</option>
+          <option value="PENDENTE">PENDENTE</option>
+          <option value="EM PROGRESSO">EM PROGRESSO</option>
+          <option value="CONCLUIDA">CONCLUIDA</option>
+  </select>
       </div>
 
       <div class="form-group">
@@ -152,7 +157,7 @@
     </tbody>
   </table>
 
-  <button id="guardar-presencas" class="btn-enviar" style="margin-top: 20px;">Guardar Presenças</button>
+  <button id="guardarPresencas" class="btn-enviar" style="margin-top: 20px;">Guardar Presenças</button>
 </section>
 
 
