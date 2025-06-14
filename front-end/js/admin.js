@@ -98,4 +98,8 @@ function gerarRelatorioPDF() {
       })
     };
 
+    document.getElementById('logOutBtn').addEventListener('click', () => {
+          sessionStorage.removeItem('Token');
+        })
+
     window.deleteUser = deleteUser

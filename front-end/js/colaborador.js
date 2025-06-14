@@ -171,3 +171,6 @@ formAtividade.addEventListener('submit', async (e) => {
     console.log(err)
   }
 })
+document.getElementById('logOutBtn').addEventListener('click', () => {
+          sessionStorage.removeItem('Token');
+        })

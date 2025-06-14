@@ -63,6 +63,16 @@ let removerInscricao = async (req, res, next) => {
     const user_id = req.params.user_id;
     const sessao_id = req.params.sessao_id;
     try {
+        const theregistration = await InscritosSessao.findOne({
+            where: {
+                sessao_id :sessao_id,
+                user_id : user_id
+            }
+        })
+        
+        if(!theregistration || theregistration.length == 0){
+            throw new ErrorHandler(404, `Inscricão não encontrada!`)
+        }
         await InscritosSessao.destroy({
             where: {
                 sessao_id :sessao_id,
