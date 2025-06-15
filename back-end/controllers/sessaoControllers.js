@@ -44,12 +44,23 @@ let getAllSessions = async (req, res, next) => {
 
 let addSessao = async (req, res, next) =>{
     let {atividade_id, dataMarcada, horaMarcada, vagas} = req.body
-    let nSessao = {atividade_id, dataMarcada, horaMarcada, vagas}
+    const nSessao = {atividade_id, dataMarcada, horaMarcada, vagas}
+    
     try{
-        await Sessao.create(nSessao);
-        res.status(201).json({
-            msg: 'Sessao criada com sucesso'
-        })
+        const Atividades = await Atividade.findAll();
+        let existe = false;
+        Atividades.forEach(async atividade => {
+            if(atividade.dataValues.atividade_id == nSessao.atividade_id){
+                existe = true;
+                await Sessao.create(nSessao);
+                res.status(201).json({
+                    msg: 'Sessao criada com sucesso'
+                })
+            } 
+        });
+        if(existe == false){
+            throw new ErrorHandler(400, `Não existe atividade com esse Id!`)
+        }
     } catch (err) {
         next(err)
     }
