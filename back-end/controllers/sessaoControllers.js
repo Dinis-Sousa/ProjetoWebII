@@ -6,6 +6,15 @@ const Atividade = db.Atividade
 const { ErrorHandler } = require("../utils/error.js");
 
 let getAllSessions = async (req, res, next) => {
+    class SessionToPresent {
+        constructor(sessao_id, nome, dataMarcada, horaMarcada, vagas){
+            this.sessao_id = sessao_id;
+            this.nome = nome;
+            this.dataMarcada = dataMarcada;
+            this.horaMarcada = horaMarcada;
+            this.vagas = vagas;
+        }
+    }
     try {
         const Sessions = await Sessao.findAll({
             attributes: ['sessao_id', 'atividade_id','dataMarcada', 'horaMarcada', 'Vagas']
@@ -13,29 +22,30 @@ let getAllSessions = async (req, res, next) => {
         if(!Sessions){
             throw new ErrorHandler(404, 'Cannot find the data requested')
         }
-        return res.status(200).json(Sessions)
+        const mySessions = []
+        let i = 0;
+        Sessions.forEach(async session => {
+            const atividadeName = await Atividade.findOne({
+                where: {
+                    atividade_id : session.dataValues.atividade_id
+                }
+            })
+            let sessionF = new SessionToPresent(Sessions[i].dataValues.sessao_id, atividadeName.dataValues.nome, Sessions[i].dataValues.dataMarcada, Sessions[i].dataValues.horaMarcada, Sessions[i].dataValues.Vagas)
+            mySessions.push(sessionF)
+            i += 1;
+            if(i == Sessions.length){
+                return res.status(200).json(mySessions)
+            }
+        });
     } catch (err) {
         next(err)
     }
 }
 
 let addSessao = async (req, res, next) =>{
-    let {nome, dataMarcada, horaMarcada, vagas} = req.body
-    let nSessao = {dataMarcada, horaMarcada, vagas}
-    let nomeA = {nome}
+    let {atividade_id, dataMarcada, horaMarcada, vagas} = req.body
+    let nSessao = {atividade_id, dataMarcada, horaMarcada, vagas}
     try{
-        const ativityId = await Atividade.findOne({
-            attributes : ['atividade_id'],
-            where: {
-                nome : nomeA.nome
-            }
-        })
-        if(!ativityId){
-            throw new ErrorHandler(404, 'A atividade que desejar criar esta sessao nao foi encontrada')
-        }
-        let atividade_id = ativityId.dataValues.atividade_id
-        nSessao = {atividade_id, dataMarcada, horaMarcada, vagas}
-        console.log(nSessao)
         await Sessao.create(nSessao);
         res.status(201).json({
             msg: 'Sessao criada com sucesso'
@@ -46,7 +56,7 @@ let addSessao = async (req, res, next) =>{
 }
 
 let apagarSessao = async (req, res, next) => {
-    const sessao_id = req.params.id
+    const sessao_id = req.params.sessao_id
     try {
         await Sessao.destroy({
             where: {
@@ -72,7 +82,6 @@ let getSessionByDate = async (req, res, next) => {
             }
         })
         const plainSessions = Sessions.map(session => session.get({ plain: true }));
-        console.log(plainSessions)
         return res.status(200).json({
             data: plainSessions
         })

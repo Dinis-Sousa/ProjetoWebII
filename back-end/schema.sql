@@ -27,7 +27,7 @@ CREATE TABLE Utilizador (
     perfil ENUM('ADMIN', 'ALUNO', 'COLABORADOR') DEFAULT 'ALUNO',
     dataRegisto DATETIME DEFAULT CURRENT_TIMESTAMP,
     pontos INT DEFAULT 0,
-    FOREIGN KEY (escola_id) REFERENCES Escola(escola_id)
+    FOREIGN KEY (escola_id) REFERENCES Escola(escola_id) ON DELETE Cascade
 );
 
 CREATE TABLE Atividade (
@@ -38,7 +38,7 @@ CREATE TABLE Atividade (
     dataInicio DATE NOT NULL,
     dataFim DATE NOT NULL,
     estado ENUM('CONCLUIDA', 'EM PROGRESSO', 'PENDENTE') DEFAULT 'PENDENTE',
-    FOREIGN KEY (area_id) REFERENCES AreaTematics(area_id)
+    FOREIGN KEY (area_id) REFERENCES AreaTematics(area_id) ON DELETE Cascade
 );
 
 CREATE TABLE Sessao (
@@ -47,7 +47,7 @@ CREATE TABLE Sessao (
     dataMarcada DATE NOT NULL,
     horaMarcada TIME NOT NULL,
     vagas INT NOT NULL,
-    FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id)
+    FOREIGN KEY (atividade_id) REFERENCES Atividade(atividade_id) ON DELETE Cascade
 );
 
 CREATE TABLE InscricaoVoluntariado (
@@ -75,7 +75,7 @@ INSERT INTO Escola(nome, morada, codigoPostal, localidade, telefone, email, nive
 VALUES('Instituto Politécnico da Maia', 'Avenida Carlos de Oliveira Campos', '4475-690', 'Maia', '22 986 6026', 'info@umaia.pt', 'Médio');
 
 INSERT INTO Escola(nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao)
-VALUES('IFaculdade de Ciências da Universidade do Porto', 'Rua do Campo Alegre', '4169-007', 'Porto', '22 040 2000', 'apoio.estudante@fc.up.pt', 'BÁSICO');
+VALUES('Faculdade de Ciências da Universidade do Porto', 'Rua do Campo Alegre', '4169-007', 'Porto', '22 040 2000', 'apoio.estudante@fc.up.pt', 'BÁSICO');
 
 INSERT INTO AreaTematics(nome, descricao)
 VALUES('AMBIENTE', 'Tipo de atividade que evitam que o ambiente piore');

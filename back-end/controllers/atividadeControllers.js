@@ -33,7 +33,7 @@ let addAtividade = async (req, res, next) => {
     }
 }
 let apagarAtividade = async (req, res, next) => {
-    const {atividade_id} = req.body
+    const atividade_id = req.params.id
     console.log(atividade_id)
     try {
         await Atividade.destroy({

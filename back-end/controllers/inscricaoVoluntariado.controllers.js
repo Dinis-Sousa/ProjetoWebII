@@ -9,18 +9,13 @@ let getTheRegistration = async (req, res, next) => {
     const user_id = req.params.user_id
     const sessao_id = req.params.sessao_id
     try {
-        const Inscricoes = await InscritosSessao.findAll({
-            attributes : ['sessao_id', 'user_id', 'presenca'],
+        const Inscricoes = await InscritosSessao.findOne({
             where : {
                 sessao_id : sessao_id,
                 user_id : user_id
             }
         })
-        if(!Inscricoes){
-            throw new ErrorHandler(404, `nao foram encontradas sessoes`)
-        }
-        const plainInscricoes = Inscricoes.map(inscricao => inscricao.get({ plain: true }));
-        return res.status(200).json(plainInscricoes);
+        return res.status(200).json(Inscricoes);
     } catch (err){
         next(err)
     }
@@ -51,9 +46,12 @@ let inscrever = async (req, res, next) => {
         res.status(201).json({
             msg: `o user ${userName.dataValues.nome} está inscrito nesta sessao!`
         })
-        removerVaga.vagas -= 1;
-        console.log(removerVaga.vagas)
-        await removerVaga.save()
+        if(removerVaga.vagas > 0){
+            removerVaga.vagas -= 1;
+            await removerVaga.save()
+        } else {
+            throw new ErrorHandler(400, `Vagas cheias, por favor procure outras sessoes!`)
+        }
     } catch (err) {
         next(err)
     }
@@ -84,13 +82,12 @@ let removerInscricao = async (req, res, next) => {
                 sessao_id : sessao_id
             }
         })
-
+        
+        removerVaga.vagas += 1;
+        await removerVaga.save()
         res.status(204).json({
             msg: 'Inscrição do user removida!'
         })
-        removerVaga.vagas += 1;
-        console.log(removerVaga.vagas)
-        await removerVaga.save()
     } catch (err) {
         next(err)
     }

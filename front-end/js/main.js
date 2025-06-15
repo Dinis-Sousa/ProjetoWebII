@@ -95,10 +95,10 @@ const myTBody = document.getElementById('ativityTBody')
         let card = `
           <tr>
             <td>${sessao.sessao_id}</td>
-            <td>${sessao.atividade_id}</td>
+            <td>${sessao.nome}</td>
             <td>${sessao.dataMarcada}</td>
             <td>${sessao.horaMarcada}</td>
-            <td>${sessao.Vagas}</td>
+            <td>${sessao.vagas}</td>
             <td>
             <button class="styleBtn" onclick="registerInSession(${sessao.sessao_id})">Inscrever-me</button>
             <button class="styleBtn" onclick="removeRegister(${sessao.sessao_id})">Remover Inscrição</button>
@@ -113,20 +113,31 @@ const myTBody = document.getElementById('ativityTBody')
         const token = sessionStorage.getItem('Token');
         const decode = jwt_decode(token);
         const user_id = decode.user_id;
-        await axios.put(`http://localhost:5500/users/${user_id}/sessions/${id}`)
-        .then(async res => {
-          await loadSessions()
-        })
+        const theRegistration = await axios.get(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+        console.log(theRegistration)
+        if (!theRegistration.data || theRegistration.data.length == 0){
+          await axios.put(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+          .then(async res => {
+            await loadSessions()
+          })
+        } else {
+          alert('Já está inscrito nessa sessao!')
+        }
     }
     
     let removeRegister = async (id) => {
       const token = sessionStorage.getItem('Token');
       const decode = jwt_decode(token);
       const user_id = decode.user_id;
-      await axios.delete(`http://localhost:5500/users/${user_id}/sessions/${id}`)
-      .then(async res => {
-        await loadSessions()
-      })
+      const theRegistration = await axios.get(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+      if (!theRegistration.data || theRegistration.data.length == 0){
+        alert('A sua inscrição não existe!')
+      } else {
+        await axios.delete(`http://localhost:5500/users/${user_id}/sessions/${id}`)
+        .then(async res => {
+          await loadSessions()
+        })
+      }
     }
     
     

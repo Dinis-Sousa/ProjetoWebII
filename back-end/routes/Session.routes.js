@@ -8,7 +8,7 @@ const inscricaoVoluntariadoControllers = require('../controllers/inscricaoVolunt
 
 router.get('/', SessaoControllers.getAllSessions)
 router.post('/', SessaoControllers.addSessao)
-router.delete('/:id', authenticateToken, SessaoControllers.apagarSessao)
+router.delete('/:sessao_id', authenticateToken, SessaoControllers.apagarSessao)
 router.get('/sessao', SessaoControllers.getSessionByDate)
 router.get('/:sessao_id/users', inscricaoVoluntariadoControllers.listOfUsersBySession);
 

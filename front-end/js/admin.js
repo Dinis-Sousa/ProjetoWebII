@@ -89,10 +89,10 @@ function gerarRelatorioPDF() {
         let card = `
           <tr>
             <td>${sessao.sessao_id}</td>
-            <td>${sessao.atividade_id}</td>
+            <td>${sessao.nome}</td>
             <td>${sessao.dataMarcada}</td>
             <td>${sessao.horaMarcada}</td>
-            <td>${sessao.Vagas}</td>
+            <td>${sessao.vagas}</td>
             <td>
               <button class="btn-editar">Editar</button>
               <button class="btn-apagar">Apagar</button>
