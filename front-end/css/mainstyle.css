@@ -22,7 +22,7 @@ body {
 }
 
 .background-blur {
-  background: url("../assets/background.jpg") center center / cover no-repeat fixed;
+  background: url("../assets/background.webp") center center / cover no-repeat fixed;
   position: fixed;
   top: 0;
   left: 0;
@@ -34,7 +34,7 @@ body {
 }
 
 .login-page {
-  background: url('../assets/login-bg-1.png') center center fixed;
+  background: url('../assets/login-bg-1.webp') center center fixed;
   background-size: cover;
   filter: blur(8px);
   position: fixed;
