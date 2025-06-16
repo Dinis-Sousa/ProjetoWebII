@@ -176,20 +176,21 @@ formAtividade.addEventListener('submit', async (e) => {
     }
     const nomeAtividade = document.getElementById('nomeAtividade').value;
     const descricaoAtividade = document.getElementById('descricaoAtividade').value;
-    const areaAtividade = document.getElementById('areaAtividade').value;
+    const area_id = document.getElementById('areaAtividade').value;
     const estadoAtividade = document.getElementById('estadoAtividade').value;
     const dataInicio = document.getElementById('dataInicio').value;
     const dataFIm = document.getElementById('dataFim').value;
 
     try {
-    const areaResponse = await axios.get(`http://localhost:5500/areas/nome/${areaAtividade}`);
-    const area_id = areaResponse.data.area_id;
-    console.log(area_id)
-
     const newAtivity = new Atividade(nomeAtividade, descricaoAtividade, area_id, dataInicio, dataFIm, estadoAtividade)
     console.log(newAtivity)
+    const token = sessionStorage.getItem('Token');
 
-    await axios.post('http://localhost:5500/ativities', newAtivity)
+    await axios.post('http://localhost:5500/ativities', newAtivity, {
+      headers : {
+          authorization : `Bearer ${token}`
+        }
+    })
     .then(async res => {
       await loadAtivities()
     })
@@ -199,21 +200,31 @@ formAtividade.addEventListener('submit', async (e) => {
 })
 
 const formSessao = document.getElementById('formSessao');
-formSessao.addEventListener('submit', async () => {
+formSessao.addEventListener('submit', async (e) => {
+
+  e.preventDefault();
   const atividade_id = document.getElementById('atividadeId').value;
   const dataMarcada = document.getElementById('dataMarcada').value;
   const horaMarcada = document.getElementById('horaMarcada').value;
-  const vagas = document.getElementById('vagas').value;
-
+  const vagas = parseInt(document.getElementById('vagas').value);
+  
   const newObj = {atividade_id, dataMarcada, horaMarcada, vagas}
-
+  const token = sessionStorage.getItem('Token');
+  
   try{
-      await axios.post('http://localhost:5500/sessions', newObj)
-      .then(async res => {
-        await loadSessions()
+    await axios.post('http://localhost:5500/sessions', newObj, {
+      headers : {
+          authorization : `Bearer ${token}`
+        }
+    })
+    .then(async res => {
+      await loadSessions()
+    })
+      .catch(err => {
+        console.error(err)
       })
   } catch (err){
-    next(Err)
+    next(err)
   }
 })
 document.getElementById('logOutBtn').addEventListener('click', () => {

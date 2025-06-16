@@ -35,8 +35,7 @@
       <p>Municípios</p>
     </div>
     <div class="dado">
-      <lottie-player class="lottie" data-src="https://lottie.host/da1f865b-9b1d-42ce-bec6-8d40ae9c2d59/kOYmcFFhuJ.json"></lottie-player>
-      <h2 class="contador" data-alvo="2046">0</h2>
+      <h2 class="contador" id="schoolRegistered" data-alvo="2046">0</h2>
       <p>Escolas Inscritas</p>
     </div>
     <div class="dado">
@@ -146,6 +145,22 @@
 </footer>
 
 </main>
-  <script src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
+<script>
+  import animarContador from './js/main.js'
+  const schoolRegistered = document.getElementById('schoolRegistered');
+  document.addEventListener('DOMContentLoaded', async () => {
+      const Schools = await axios.get('http://localhost:5500/schools');
+      console.log(Schools.data.length)
+      .then(res => {
+        schoolRegistered.innerHtml = `${Schools.data.length}`
+      })
+      .catch(err => {
+        console.error(err)
+      })
+      console.log(Schools.length)
+  })
+</script>

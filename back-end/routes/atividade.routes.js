@@ -14,7 +14,7 @@ router.get('/:id/sessions', atividadeController.getSessionsByAtivity)
 router.get('/', atividadeController.getAllAtividades); 
 router.post('/', authenticateTokenC,  validateDateMiddleware,  atividadeController.addAtividade);
 router.get('/:atividade_id', atividadeController.getAtivityNameById);
-router.patch('/:atividade_id', atividadeController.alterarEstado);
+router.patch('/:atividade_id', authenticateTokenC,  atividadeController.alterarEstado);
 router.delete('/:id', authenticateTokenC,  atividadeController.apagarAtividade);
 
 module.exports = router;

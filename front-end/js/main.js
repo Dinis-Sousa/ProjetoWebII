@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function animarContador(contador) {
+export function animarContador(contador) {
     const alvo = +contador.getAttribute('data-alvo');
     let atual = 0;
     const duracao = 2000;
