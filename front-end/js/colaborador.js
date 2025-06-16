@@ -2,7 +2,7 @@ addEventListener('DOMContentLoaded', async () => {
     await loadAtivities();
     await loadSessions();
     await loadNumberOfSessions();
-    await loadRegisteredBySession(1)
+    await loadRegisteredBySession(3)
 })
 const ativitiesTBody = document.getElementById('ativitiesTBody');
 const sessionsTBody = document.getElementById('sessionsTBody')
@@ -218,4 +218,4 @@ formSessao.addEventListener('submit', async () => {
 })
 document.getElementById('logOutBtn').addEventListener('click', () => {
           sessionStorage.removeItem('Token');
-        })
+})

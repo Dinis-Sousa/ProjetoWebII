@@ -42,13 +42,13 @@ let inscrever = async (req, res, next) => {
             }
         })
         
-        await InscritosSessao.create(myInfo)
-        res.status(201).json({
-            msg: `o user ${userName.dataValues.nome} está inscrito nesta sessao!`
-        })
         if(removerVaga.vagas > 0){
             removerVaga.vagas -= 1;
             await removerVaga.save()
+            await InscritosSessao.create(myInfo)
+            res.status(201).json({
+                msg: `o user ${userName.dataValues.nome} está inscrito nesta sessao!`
+            })
         } else {
             throw new ErrorHandler(400, `Vagas cheias, por favor procure outras sessoes!`)
         }

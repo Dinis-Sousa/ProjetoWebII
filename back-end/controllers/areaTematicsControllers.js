@@ -12,22 +12,19 @@ let getAllAreas = async (req, res, next) => {
         if(!Areas){
             throw new ErrorHandler(404, `NO AREAS WERE FOUND!`)
         }
-        const plainAreas = Areas.map(area => area.get({ plain: true }));
-        return res.status(200).json({
-            data: plainAreas
-        })
+        return res.status(200).json(Areas)
     } catch (err) {
         next(err);
     }
 }
 let getSpecificArea = async (req, res, next) => {
-    const area_id = req.params.id
+    const area_id = req.params.area_id
     try {
         const SpecificArea = await Area.findByPk(area_id)
         if(!SpecificArea){
-            throw new ErrorHandler(404, `NO AREAS WERE FOUND!`)
+            throw new ErrorHandler(404, `Area not found!`)
         }
-        res.status(200).json({data: SpecificArea})
+        res.status(200).json(SpecificArea)
     } catch (err){
         next(err)
     }
@@ -55,7 +52,7 @@ let getAtivitiesByArea = async (req, res, next) => {
 }
 
 let deleteArea = async (req, res, next) => {
-    const area_id = req.params.id
+    const area_id = req.params.area_id
     try {
         await Area.destroy({
             where: {area_id: area_id}
@@ -72,27 +69,18 @@ let addArea = async (req, res, next) => {
     const {nome, descricao} = req.body
     const newArea = {nome, descricao}
     try {
+        if(!newArea.nome){
+            throw new ErrorHandler(404, `Don't leave the name input empty!`)
+        }
+        else if(!newArea.descricao){
+            throw new ErrorHandler(404, `Don't leave the description input empty!`)
+
+        }
         await Area.create(newArea)
         res.status(201).json({
             msg:'Area criada com sucesso'
         })
     } catch (err) {
-        next(err)
-    }
-}
-
-let getAreaIdByName = async (req, res, next) => {
-    const nome = req.params.nome
-    console.log(nome)
-    try{
-        const area_id = await Area.findOne({
-            attributes: ['area_id'],
-            where: {
-                nome: nome
-            }
-        })
-        res.status(200).json(area_id)
-    } catch (err){
         next(err)
     }
 }
@@ -103,5 +91,4 @@ module.exports = {
     deleteArea,
     addArea,
     getSpecificArea,
-    getAreaIdByName
 }

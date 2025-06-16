@@ -30,7 +30,7 @@ let addSchool = async (req, res, next) => {
 }
 
 let apagarSchool = async (req, res, next) => {
-    let school_id = req.params.id
+    let school_id = req.params.escola_id
     try {
         await School.destroy({
             where : {

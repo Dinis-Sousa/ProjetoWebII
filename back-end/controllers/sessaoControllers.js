@@ -54,7 +54,7 @@ let addSessao = async (req, res, next) =>{
                 existe = true;
                 await Sessao.create(nSessao);
                 res.status(201).json({
-                    msg: 'Sessao criada com sucesso'
+                    msg: 'Sessao criada com sucesso'    
                 })
             } 
         });

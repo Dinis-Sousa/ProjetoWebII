@@ -59,7 +59,7 @@ let alterarEstado = async (req, res, next) => {
                 atividade_id : atividade_id
             }
         })
-        if(!Atividade){
+        if(!NAtividade){
             throw new ErrorHandler(404, 'Nao foi encontrada a atividade desejada!')
         }
         NAtividade.estado = newInfo.estado
@@ -95,9 +95,9 @@ let getSessionsByAtivity = async (req, res, next) => {
 }
 
 let getAtivityNameById = async (req, res, next) => {
-    const {atividade_id} = req.params.atividade_id;
+    const atividade_id = req.params.atividade_id;
     try {
-        const nameAtivity = findOne({
+        const nameAtivity = await Atividade.findOne({
             attributes: ['nome'],
             where: {
                 atividade_id : atividade_id
@@ -106,8 +106,9 @@ let getAtivityNameById = async (req, res, next) => {
         if(!nameAtivity){
             throw new ErrorHandler(404, 'Atividade com esse id não encontrada!')
         }
+        console.log(nameAtivity)
 
-        res.statusCode(200).json(nameAtivity)
+        res.status(200).json(nameAtivity)
     } catch(err) {
         next(err)
     }

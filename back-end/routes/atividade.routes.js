@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authenticateToken = require('../utils/auth.js');
+const {authenticateTokenC} = require('../utils/auth.js');
 const validateDateMiddleware = require('../utils/validateDateMiddleware.js')
 
 const atividadeController = require('../controllers/atividadeControllers.js');
@@ -12,9 +12,9 @@ router.put('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.addAd
 router.get('/schools', adesaoAtividadeControllers.getAllAdesoes)
 router.get('/:id/sessions', atividadeController.getSessionsByAtivity)
 router.get('/', atividadeController.getAllAtividades); 
-router.post('/', validateDateMiddleware,  atividadeController.addAtividade);
-router.get('/atividade_id', atividadeController.getAtivityNameById)
-router.patch('/:atividade_id', atividadeController.alterarEstado)
-router.delete('/:id', authenticateToken,  atividadeController.apagarAtividade)
+router.post('/', authenticateTokenC,  validateDateMiddleware,  atividadeController.addAtividade);
+router.get('/:atividade_id', atividadeController.getAtivityNameById);
+router.patch('/:atividade_id', atividadeController.alterarEstado);
+router.delete('/:id', authenticateTokenC,  atividadeController.apagarAtividade);
 
 module.exports = router;
