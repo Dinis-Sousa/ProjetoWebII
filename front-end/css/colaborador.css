@@ -230,3 +230,9 @@ main.container {
   padding: 6px 10px;
   font-size: 1rem;
 }
+#selecionarSessao{
+  border-radius: 50px;
+  background-color:#2c7be5;
+  color: white;
+  padding: .3vh .2vw;
+}

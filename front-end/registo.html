@@ -29,7 +29,7 @@
       </div>
 
       <div class="input-field">
-        <select id="escolaNome" name="escola" required>
+        <select id="rEscola_Id" name="escola" required>
           
         </select><br>
         <label>Escola</label>
@@ -43,7 +43,7 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
   <script>
-    const escolaNome = document.getElementById('escolaNome');
+    const escolaNome = document.getElementById('rEscola_Id');
     addEventListener('DOMContentLoaded', async () => {
       const escolas = await axios.get('http://localhost:5500/schools')
       const array = escolas.data;
@@ -57,13 +57,21 @@
     let myForm = document.getElementById('myForm');
     myForm.addEventListener('submit', async (e) => {
       e.preventDefault()
+      class User {
+        constructor(escola_id, nome, email, passwordHash){
+          this.escola_id = escola_id;
+          this.nome = nome;
+          this.email = email;
+          this.passwordHash = passwordHash;
+        }
+      }
       const Rname = document.getElementById('rName').value
       const rEmail = document.getElementById('rEmail').value
       const rPass = document.getElementById('rPass').value
-      const rEscola = document.getElementById('escolaNome').value
-      console.log(rEscola)
+      const rEscola_Id = document.getElementById('rEscola_Id').value
+      console.log(rEscola_Id)
 
-      const myInfo = {nome : Rname, email: rEmail, passwordHash: rPass, escola : rEscola}
+      const myInfo = new User(rEscola_Id, Rname, rEmail, rPass)
       await axios.post('http://localhost:5500/users', myInfo)
       .then(res => console.log(res.data))
       .catch(err => console.error(err))

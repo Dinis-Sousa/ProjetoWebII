@@ -87,6 +87,7 @@ body {
   background-color: rgba(0, 0, 0, 0.6);
   padding: 40px;
   border-radius: 12px;
+  height: 30vh;
   width: 350px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
   position: absolute;

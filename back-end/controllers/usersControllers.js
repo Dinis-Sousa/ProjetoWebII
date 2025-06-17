@@ -73,7 +73,7 @@ let checkUser = async (req, res, next) => {
             }
         })
         if(!Utilizador){
-            throw new ErrorHandler(401, 'Nao existe utilizador com esse email')
+            throw new ErrorHandler(400, 'Nao existe utilizador com esse email')
         } else {
             const user1 = Utilizador.dataValues
             if(user1.passwordHash == passHash){
@@ -105,7 +105,7 @@ let checkUser = async (req, res, next) => {
                     break;
             }
         } else {
-            throw new ErrorHandler(401, `Password incorreta!`)
+            throw new ErrorHandler(400, `Password incorreta!`)
         }
     }
     } catch (err){
@@ -114,24 +114,9 @@ let checkUser = async (req, res, next) => {
 }
 
 let addUser = async (req, res, next) => {
-    const {nome, email, passwordHash, escola_id} = req.body
+    const {escola_id, nome, email, passwordHash} = req.body
     let pontos = 0;
     try {
-        if(!email.endsWith("@gmail.com")){
-            throw new ErrorHandler(401, `Tem de utilizar um email!`)
-        }
-        let allUsers = await User.findAll({
-            attributes : [`email`]
-        })
-        allEmails = []
-        for (let user in allUsers){
-            allEmails.push(allUsers[user].dataValues)
-        }
-        for(let i = 0; i < allEmails.length; i++){
-            if(email == allEmails[i].email){
-                throw new ErrorHandler(401, `Já existe uma conta associada a esse email!`)
-            }
-        }
         const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
         await User.create(nUserInfo)
         res.status(201).json({

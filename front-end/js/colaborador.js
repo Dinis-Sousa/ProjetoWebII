@@ -2,7 +2,7 @@ addEventListener('DOMContentLoaded', async () => {
     await loadAtivities();
     await loadSessions();
     await loadNumberOfSessions();
-    await loadRegisteredBySession(3)
+    await loadRegisteredBySession(1)
 })
 const ativitiesTBody = document.getElementById('ativitiesTBody');
 const sessionsTBody = document.getElementById('sessionsTBody')
@@ -122,19 +122,37 @@ let loadAtivities = async () => {
           const array = Registrations.data
           corpoPresente.innerHTML = '';
           if (!array || array.length === 0) return;
-              array.forEach(user => {
-              let row = `
-              <tr>
-              <td>${user.nome}</td>
-              <td>
-                <label class="circle-radio">
-                  <input type="checkbox" class="checkboxes" data-user-id="${user.user_id}" data-session-id="${id}">
-                  <span class="custom-circle">presente</span>
-                </label>
-              </td>
-              </tr>
-              `
-              corpoPresente.innerHTML += row
+              array.forEach(async user => {
+                let array2 = await axios.get(`http://localhost:5500/users/${user.user_id}/sessions/${id}`)
+                let previewsPresencaValue = array2.data.presenca
+                console.log(previewsPresencaValue)
+                if(previewsPresencaValue == false){
+                  let row = `
+                  <tr>
+                  <td>${user.nome}</td>
+                  <td>
+                    <label class="circle-radio">
+                      <input type="checkbox" class="checkboxes" data-user-id="${user.user_id}" data-session-id="${id}">
+                      <span class="custom-circle">presente</span>
+                    </label>
+                  </td>
+                  </tr>
+                  `
+                  corpoPresente.innerHTML += row
+                } else {
+                  let row = `
+                  <tr>
+                  <td>${user.nome}</td>
+                  <td>
+                    <label class="circle-radio">
+                      <input type="checkbox" class="checkboxes" data-user-id="${user.user_id}" data-session-id="${id}" checked>
+                      <span class="custom-circle">presente</span>
+                    </label>
+                  </td>
+                  </tr>
+                  `
+                  corpoPresente.innerHTML += row
+                }
           })
         }
 }
@@ -153,7 +171,12 @@ let markPresence = () => {
     let array = await axios.get(`http://localhost:5500/users/${user_id}/sessions/${session_id}`)
     let previewsPresencaValue = array.data.presenca
     if(presenca != previewsPresencaValue){
-      await axios.patch(`http://localhost:5500/users/${user_id}/sessions/${session_id}`)
+      const token = sessionStorage.getItem('Token');
+      await axios.patch(`http://localhost:5500/users/${user_id}/sessions/${session_id}`, {}, {
+        headers : {
+          authorization : `Bearer ${token}`
+        }
+      })
     } else {
       return
     }

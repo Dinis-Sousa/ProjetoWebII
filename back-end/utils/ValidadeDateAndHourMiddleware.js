@@ -1,9 +1,28 @@
 const db = require('../models/connect.js'); 
 const Atividade = db.Atividade;
 
-let validadeDateAndHour = async (req, res, next) => {
+let validateDateAndHour = async (req, res, next) => {
     const atividade_id = req.body.atividade_id;
     const dataMarcada = req.body.dataMarcada;
+    const horaMarcada = req.body.horaMarcada
+    try{
+        const [hour, minute, second] = horaMarcada.split(':').map(Number);
+
+        // Check time boundaries
+        const totalSeconds = hour * 3600 + minute * 60 + second;
+        const start = 9 * 3600;    // 09:00:00
+        const end = 18 * 3600;     // 18:00:00
+
+        if (totalSeconds < start || totalSeconds > end) {
+            return res.status(403).json({ error: 'Time must be between 09:00:00 and 18:00:00' });
+        }
+
+    } catch (err){
+        console.error('Erro ao validar a hora:', err);
+        return res.status(500).json({
+            error: 'Erro interno do servidor ao validar a hora.'
+        });
+    }
 
     try {
         const ativityDates = await Atividade.findOne({
@@ -16,9 +35,6 @@ let validadeDateAndHour = async (req, res, next) => {
         if (!ativityDates) {
             return res.status(404).json({ error: 'Atividade not found' });
         }
-
-        console.log(ativityDates.dataInicio)
-        console.log(ativityDates.dataFim)
 
         const dateStart = new Date(ativityDates.dataInicio);
         dateStart.setHours(0, 0, 0, 0); 
@@ -36,8 +52,8 @@ let validadeDateAndHour = async (req, res, next) => {
                 error: 'Data marcada está fora do intervalo permitido.'
             });
         }
-    } catch (error) {
-        console.error('Erro ao validar datas:', error);
+    } catch (err) {
+        console.error('Erro ao validar datas:', err);
         return res.status(500).json({
             error: 'Erro interno do servidor ao validar datas.'
         });
@@ -45,4 +61,4 @@ let validadeDateAndHour = async (req, res, next) => {
 };
 
 
-module.exports = validadeDateAndHour;
+module.exports = validateDateAndHour;
