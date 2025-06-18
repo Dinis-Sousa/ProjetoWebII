@@ -23,7 +23,16 @@
   </header>
 <div class="background-blur"></div>
   <main class="container">
+  <div>
+    <h1>Envie as suas imagens!</h1>
 
+    <form id="imagensForm">
+      <div class="form-group">
+        <input type="file" id="imagem" name="imagem" required>
+      </div>
+      <button type="submit" class="btn-enviar">Enviar</button>
+    </form>
+  </div>
   <div class="atividades">
     <h1>Plano de Atividades</h1>
 
@@ -163,6 +172,37 @@
 </body>
 </html>
 <script>
+  const imagensForm = document.getElementById('imagensForm');
+
+  imagensForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('imagem');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Por favor, selecione uma imagem.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('imagem', file);
+
+    try {
+      const res = await axios.post(`http://localhost:5500/cloud/upload`, formData, {
+        headers :{
+          'Content-Type' : 'multipart/form-data'
+        }
+      });
+      const imageUrl = response.data.url;
+
+      resultado.innerHTML = `
+        <p>Upload feito com sucesso!</p>
+        <img src="${imageUrl}" alt="Imagem carregada" style="max-width: 300px;" />
+      `;
+  } catch(err){
+      console.error(err)
+  }})
+
   const areaAtividade = document.getElementById('areaAtividade');
   document.addEventListener('DOMContentLoaded', async () => {
     try {
