@@ -4,6 +4,15 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+// Import database connection
+const { sequelize } = require('./models/connect');
+
+// Only sync database if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  sequelize.sync()
+    .then(() => console.log('Database connected'))
+    .catch(err => console.error('Database connection error:', err));
+}
 
 let HOST = process.env.HOST || 'localhost';
 let PORT = process.env.PORT || 5500;
