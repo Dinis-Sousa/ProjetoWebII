@@ -1,76 +1,237 @@
-const { request } = require('../setup');
+const request = require('supertest');
+const { Sequelize } = require('sequelize');
+const app = require('../../../server');
+const db = require('../../../models/connect');
+const { createToken } = require('../../../utils/auth');
 
-describe('Rotas de Atividade (Integração)', () => {
-  let tokenClient;
-  let atividadeIdCriada;
+// Dados de teste
+const mockAdminUser = {
+  user_id: 1,
+  nome: 'Admin',
+  email: 'admin@test.com',
+  role: 'ADMIN'
+};
 
-  const novaAtividade = {
-    nome: `Atividade Teste ${Date.now()}`,
-    descricao: 'Descrição de teste',
-    data_inicio: '2025-07-01',
-    data_fim: '2025-07-03'
-  };
+const mockAtividade = {
+  nome: 'Atividade de Teste',
+  descricao: 'Descrição da atividade de teste',
+  area_id: '1',
+  dataInicio: '2024-12-01T10:00:00Z',
+  dataFim: '2024-12-31T18:00:00Z',
+  estado: 'PENDENTE'
+};
 
+// Token de autenticação
+let authToken;
+
+// Configuração dos testes
+describe('Testes de Integração - Atividades', () => {
   beforeAll(async () => {
-    const loginRes = await request
-      .post('/users/login')
-      .send({
-        email: 'client@example.com',
-        password: 'password123'
+    // Sincronizar o banco de dados de teste
+    await db.sequelize.sync({ force: true });
+    
+    // Criar um token de autenticação
+    authToken = createToken(mockAdminUser);
+  });
+
+  afterAll(async () => {
+    // Fechar a conexão com o banco de dados
+    await db.sequelize.close();
+  });
+
+  describe('GET /ativities', () => {
+    it('deve retornar uma lista vazia quando não há atividades', async () => {
+      const response = await request(app).get('/ativities');
+      
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(0);
+    });
+
+    it('deve retornar uma lista de atividades', async () => {
+      // Primeiro, cria uma atividade
+      await db.Atividade.create(mockAtividade);
+      
+      const response = await request(app).get('/ativities');
+      
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(1);
+      expect(response.body[0]).toHaveProperty('atividade_id');
+      expect(response.body[0].nome).toBe(mockAtividade.nome);
+    });
+  });
+
+  describe('POST /ativities', () => {
+    it('deve criar uma nova atividade com dados válidos', async () => {
+      const response = await request(app)
+        .post('/ativities')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(mockAtividade);
+      
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('msg', 'atividade criada com sucesso');
+      
+      // Verifica se a atividade foi realmente criada
+      const atividades = await db.Atividade.findAll();
+      expect(atividades.length).toBe(1);
+      expect(atividades[0].nome).toBe(mockAtividade.nome);
+    });
+
+    it('não deve criar atividade sem autenticação', async () => {
+      const response = await request(app)
+        .post('/ativities')
+        .send(mockAtividade);
+      
+      expect(response.status).toBe(401);
+    });
+
+    it('não deve criar atividade com dados inválidos', async () => {
+      const invalidAtividade = { ...mockAtividade, nome: '' };
+      
+      const response = await request(app)
+        .post('/ativities')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(invalidAtividade);
+      
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('GET /ativities/:id', () => {
+    let atividadeId;
+
+    beforeAll(async () => {
+      // Criar uma atividade para teste
+      const atividade = await db.Atividade.create(mockAtividade);
+      atividadeId = atividade.atividade_id;
+    });
+
+    it('deve retornar os detalhes de uma atividade existente', async () => {
+      const response = await request(app).get(`/ativities/${atividadeId}`);
+      
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('atividade_id', atividadeId);
+      expect(response.body.nome).toBe(mockAtividade.nome);
+    });
+
+    it('deve retornar 404 para uma atividade inexistente', async () => {
+      const response = await request(app).get('/ativities/9999');
+      
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe('PATCH /ativities/:atividade_id', () => {
+    let atividadeId;
+
+    beforeEach(async () => {
+      // Criar uma atividade para teste
+      const atividade = await db.Atividade.create(mockAtividade);
+      atividadeId = atividade.atividade_id;
+    });
+
+    it('deve atualizar o estado de uma atividade', async () => {
+      const response = await request(app)
+        .patch(`/ativities/${atividadeId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ estado: 'EM PROGRESSO' });
+      
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('estado', 'EM PROGRESSO');
+      
+      // Verifica se a atualização foi persistida
+      const updatedAtividade = await db.Atividade.findByPk(atividadeId);
+      expect(updatedAtividade.estado).toBe('EM PROGRESSO');
+    });
+
+    it('não deve atualizar com um estado inválido', async () => {
+      const response = await request(app)
+        .patch(`/ativities/${atividadeId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ estado: 'ESTADO_INVALIDO' });
+      
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('DELETE /ativities/:id', () => {
+    let atividadeId;
+
+    beforeEach(async () => {
+      // Criar uma atividade para teste
+      const atividade = await db.Atividade.create(mockAtividade);
+      atividadeId = atividade.atividade_id;
+    });
+
+    it('deve remover uma atividade existente', async () => {
+      const response = await request(app)
+        .delete(`/ativities/${atividadeId}`)
+        .set('Authorization', `Bearer ${authToken}`);
+      
+      expect(response.status).toBe(204);
+      
+      // Verifica se a atividade foi realmente removida
+      const atividade = await db.Atividade.findByPk(atividadeId);
+      expect(atividade).toBeNull();
+    });
+
+    it('não deve remover uma atividade inexistente', async () => {
+      const response = await request(app)
+        .delete('/ativities/9999')
+        .set('Authorization', `Bearer ${authToken}`);
+      
+      expect(response.status).toBe(404);
+    });
+  });
+
+  describe('GET /ativities/:id/sessions', () => {
+    let atividadeId;
+
+    beforeAll(async () => {
+      // Criar uma atividade e sessões associadas
+      const atividade = await db.Atividade.create(mockAtividade);
+      atividadeId = atividade.atividade_id;
+      
+      // Criar sessões para a atividade
+      await db.Sessao.bulkCreate([
+        { 
+          dataMarcada: '2024-12-10', 
+          horaMarcada: '10:00',
+          vagas: 10,
+          atividade_id: atividadeId
+        },
+        { 
+          dataMarcada: '2024-12-17', 
+          horaMarcada: '14:00',
+          vagas: 15,
+          atividade_id: atividadeId
+        }
+      ]);
+    });
+
+    it('deve retornar as sessões de uma atividade', async () => {
+      const response = await request(app).get(`/ativities/${atividadeId}/sessions`);
+      
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(2);
+      expect(response.body[0]).toHaveProperty('sessao_id');
+      expect(response.body[0].atividade_id).toBe(atividadeId);
+    });
+
+    it('deve retornar array vazio para atividade sem sessões', async () => {
+      // Criar uma nova atividade sem sessões
+      const novaAtividade = await db.Atividade.create({
+        ...mockAtividade,
+        nome: 'Atividade sem sessões'
       });
-
-    tokenClient = loginRes.body.token;
-  });
-
-  test('GET /atividade - Deve retornar todas as atividades', async () => {
-    const res = await request.get('/atividade');
-
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-  });
-
-  test('POST /atividade - Deve criar uma nova atividade (com token e datas válidas)', async () => {
-    const res = await request
-      .post('/atividade')
-      .set('Authorization', `Bearer ${tokenClient}`)
-      .send(novaAtividade);
-
-    expect(res.statusCode).toBe(201); // ou 200, dependendo do teu controller
-    expect(res.body).toHaveProperty('atividade_id');
-
-    atividadeIdCriada = res.body.atividade_id;
-  });
-
-  test('GET /atividade/:atividade_id - Deve retornar o nome da atividade', async () => {
-    const res = await request.get(`/atividade/${atividadeIdCriada}`);
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('nome');
-  });
-
-  test('GET /atividade/:id/sessions - Deve retornar sessões da atividade (mesmo que vazio)', async () => {
-    const res = await request.get(`/atividade/${atividadeIdCriada}/sessions`);
-
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-  });
-
-  test('PATCH /atividade/:atividade_id - Deve alterar o estado da atividade (com token)', async () => {
-    const res = await request
-      .patch(`/atividade/${atividadeIdCriada}`)
-      .set('Authorization', `Bearer ${tokenClient}`)
-      .send({ estado: 'PENDENTE' }); // Ajusta ao que o teu controller espera
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
-  });
-
-  test('DELETE /atividade/:id - Deve apagar a atividade criada (com token)', async () => {
-    const res = await request
-      .delete(`/atividade/${atividadeIdCriada}`)
-      .set('Authorization', `Bearer ${tokenClient}`);
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
+      
+      const response = await request(app).get(`/ativities/${novaAtividade.atividade_id}/sessions`);
+      
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(0);
+    });
   });
 });

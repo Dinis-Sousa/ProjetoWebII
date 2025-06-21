@@ -1,36 +1,21 @@
-// setup.js
-const supertest = require('supertest');
-const app = require('../../server'); // o teu app Express exportado
-const db = require('../../models/connect'); // o teu sequelize ou conexões
+const { sequelize } = require('../../models/connect');
 
-// Mock dos modelos - só se quiseres isolar a lógica e não tocar na DB real
-jest.mock('../../models/connect', () => {
-  const originalModule = jest.requireActual('../../models/connect');
-  return {
-    ...originalModule,
-    Utilizador: {
-      ...originalModule.Utilizador,
-      findOne: jest.fn(),
-      // ...
-    },
-    sequelize: {
-      ...originalModule.sequelize,
-      sync: jest.fn().mockResolvedValue(true),
-      close: jest.fn().mockResolvedValue(true),
-    },
-  };
+// Configuração global para os testes de integração
+beforeAll(async () => {
+  // Configurar o ambiente de teste
+  process.env.NODE_ENV = 'test';
+  
+  // Sincronizar o banco de dados de teste
+  await sequelize.sync({ force: true });
 });
 
-const request = supertest(app);
-
-// Limpar mocks entre testes
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
-// Fecha conexão mockada ou real após todos os testes
 afterAll(async () => {
-  await db.sequelize.close();
+  // Fechar a conexão com o banco de dados após todos os testes
+  await sequelize.close();
 });
 
-module.exports = { request, app, db };
+// Limpar os dados entre os testes
+afterEach(async () => {
+  // Limpar todas as tabelas
+  await sequelize.truncate({ cascade: true });
+});
