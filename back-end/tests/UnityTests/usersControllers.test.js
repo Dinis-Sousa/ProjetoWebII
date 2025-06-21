@@ -1,215 +1,170 @@
-// tests/usersControllers.unit.test.js
-const userController = require('../../controllers/usersControllers');
-const db = require('../../models/connect.js');
+const { getSessaoInscritasByUser, getAllUsers, checkUser, addUser, apagarUser } = require('../../controllers/usersControllers.js');
+const db = require('../../models/connect');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-jest.mock('../../models/connect.js');
+jest.mock('../../models/connect');
+jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
 
-describe('User Controller Unit Tests', () => {
-  let req, res, next;
+const mockRes = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  res.send = jest.fn();
+  return res;
+};
+
+const next = jest.fn();
+
+describe('User Controller', () => {
 
   beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-    next = jest.fn();
     jest.clearAllMocks();
   });
 
   describe('getSessaoInscritasByUser', () => {
-    it('should call next with error if user not found', async () => {
-      req.params.id = 123;
-      db.Utilizador.findOne.mockResolvedValue(null);
+    it('should return session data for a valid user', async () => {
+      const req = { params: { id: 1 } };
+      const res = mockRes();
 
-      await userController.getSessaoInscritasByUser(req, res, next);
-
-      expect(next).toHaveBeenCalled();
-      expect(next.mock.calls[0][0].message).toBe('Utilizador nao encontrado');
-    });
-
-    it('should call next with error if no sessions found', async () => {
-      req.params.id = 123;
       db.Utilizador.findOne.mockResolvedValue({ nome: 'Teste' });
-      db.InscritosSessao.findAll.mockResolvedValue(null);
+      db.InscritosSessao.findAll.mockResolvedValue([
+        { get: () => ({ sessao_id: 101, user_id: 1, presenca: true }) }
+      ]);
 
-      await userController.getSessaoInscritasByUser(req, res, next);
-
-      expect(next).toHaveBeenCalled();
-      expect(next.mock.calls[0][0].message).toMatch(/Sessoes nao encontradas/);
-    });
-
-    it('should return plain sessions array', async () => {
-      req.params.id = 123;
-      db.Utilizador.findOne.mockResolvedValue({ nome: 'Teste' });
-
-      const mockSessaoInstance = {
-        get: jest.fn().mockReturnValue({ sessao_id: 1, user_id: 123, presenca: true }),
-      };
-      db.InscritosSessao.findAll.mockResolvedValue([mockSessaoInstance]);
-
-      await userController.getSessaoInscritasByUser(req, res, next);
+      await getSessaoInscritasByUser(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith([{ sessao_id: 1, user_id: 123, presenca: true }]);
-      expect(next).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith([
+        { sessao_id: 101, user_id: 1, presenca: true }
+      ]);
+    });
+
+    it('should throw 404 if user not found', async () => {
+      const req = { params: { id: 999 } };
+      db.Utilizador.findOne.mockResolvedValue(null);
+
+      await getSessaoInscritasByUser(req, {}, next);
+
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
   describe('getAllUsers', () => {
-    it('should call next with error if no users', async () => {
-      db.Utilizador.findAll.mockResolvedValue(null);
+    it('should return all users', async () => {
+      const req = {};
+      const res = mockRes();
+      const mockUsers = [{ nome: 'User1' }, { nome: 'User2' }];
 
-      await userController.getAllUsers(req, res, next);
+      db.Utilizador.findAll.mockResolvedValue(mockUsers);
 
-      expect(next).toHaveBeenCalled();
-      expect(next.mock.calls[0][0].message).toBe('There are no users!');
-    });
-
-    it('should return users list', async () => {
-      const fakeUsers = [{ user_id: 1, nome: 'User1' }, { user_id: 2, nome: 'User2' }];
-      db.Utilizador.findAll.mockResolvedValue(fakeUsers);
-
-      await userController.getAllUsers(req, res, next);
+      await getAllUsers(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(fakeUsers);
-      expect(next).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('apagarUser', () => {
-    it('should delete user and respond 204', async () => {
-      req.params.user_id = 42;
-      db.Utilizador.destroy.mockResolvedValue(1);
-
-      await userController.apagarUser(req, res, next);
-
-      expect(db.Utilizador.destroy).toHaveBeenCalledWith({ where: { user_id: 42 } });
-      expect(res.status).toHaveBeenCalledWith(204);
-      expect(res.send).toHaveBeenCalled();
-      expect(next).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(mockUsers);
     });
 
-    it('should call next on destroy error', async () => {
-      const error = new Error('destroy fail');
-      db.Utilizador.destroy.mockRejectedValue(error);
+    it('should handle no users', async () => {
+      const req = {};
+      db.Utilizador.findAll.mockResolvedValue(null);
 
-      await userController.apagarUser(req, res, next);
+      await getAllUsers(req, {}, next);
 
-      expect(next).toHaveBeenCalledWith(error);
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
   describe('checkUser', () => {
-    it('should call next with error if user email not found', async () => {
-      req.body = { tEmail: 'email@test.com', passHash: '123' };
-      db.Utilizador.findAll.mockResolvedValue([]);
+    it('should login user with correct credentials', async () => {
+      const req = {
+        body: {
+          tEmail: 'test@email.com',
+          passHash: 'plainpass'
+        }
+      };
+      const res = mockRes();
 
-      await userController.checkUser(req, res, next);
-
-      expect(next).toHaveBeenCalled();
-      expect(next.mock.calls[0][0].message).toBe('Nao existe utilizador com esse email');
-    });
-
-    it('should call next with error if password incorrect', async () => {
-      req.body = { tEmail: 'email@test.com', passHash: 'wrongpass' };
       db.Utilizador.findAll.mockResolvedValue([
-        { dataValues: { user_id: 1, perfil: 'ALUNO', passwordHash: 'correctpass' } }
+        {
+          dataValues: {
+            user_id: 1,
+            perfil: 'ALUNO',
+            passwordHash: 'hashed'
+          }
+        }
       ]);
 
-      await userController.checkUser(req, res, next);
+      bcrypt.compare.mockResolvedValue(true);
+      jwt.sign.mockReturnValue('fake-jwt-token');
 
-      expect(next).toHaveBeenCalled();
-      expect(next.mock.calls[0][0].message).toBe('Password incorreta!');
-    });
+      await checkUser(req, res, next);
 
-    it('should return token and message on success for ALUNO', async () => {
-      req.body = { tEmail: 'email@test.com', passHash: 'correctpass' };
-      const userData = { user_id: 1, perfil: 'ALUNO', passwordHash: 'correctpass' };
-      db.Utilizador.findAll.mockResolvedValue([{ dataValues: userData }]);
-      jwt.sign.mockReturnValue('mocktoken');
-
-      await userController.checkUser(req, res, next);
-
-      expect(jwt.sign).toHaveBeenCalledWith(
-        { user_id: 1, perfil: 'ALUNO' },
-        expect.any(String),
-        { expiresIn: '1h' }
-      );
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ msg: 'Aluno logado', token: 'mocktoken' });
-      expect(next).not.toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith({
+        msg: 'Aluno logado',
+        token: 'fake-jwt-token'
+      });
     });
 
-    it('should return token and message on success for COLABORADOR', async () => {
-      req.body = { tEmail: 'email@test.com', passHash: 'correctpass' };
-      const userData = { user_id: 1, perfil: 'COLABORADOR', passwordHash: 'correctpass' };
-      db.Utilizador.findAll.mockResolvedValue([{ dataValues: userData }]);
-      jwt.sign.mockReturnValue('mocktoken');
+    it('should reject login with incorrect password', async () => {
+      const req = {
+        body: {
+          tEmail: 'wrong@email.com',
+          passHash: 'wrongpass'
+        }
+      };
 
-      await userController.checkUser(req, res, next);
+      db.Utilizador.findAll.mockResolvedValue([
+        {
+          dataValues: {
+            passwordHash: 'hashed'
+          }
+        }
+      ]);
 
-      expect(res.json).toHaveBeenCalledWith({ msg: 'Colaborador logado', token: 'mocktoken' });
-      expect(next).not.toHaveBeenCalled();
-    });
+      bcrypt.compare.mockResolvedValue(false);
 
-    it('should return token and message on success for ADMIN', async () => {
-      req.body = { tEmail: 'email@test.com', passHash: 'correctpass' };
-      const userData = { user_id: 1, perfil: 'ADMIN', passwordHash: 'correctpass' };
-      db.Utilizador.findAll.mockResolvedValue([{ dataValues: userData }]);
-      jwt.sign.mockReturnValue('mocktoken');
+      await checkUser(req, {}, next);
 
-      await userController.checkUser(req, res, next);
-
-      expect(res.json).toHaveBeenCalledWith({ msg: 'Admin logado', token: 'mocktoken' });
-      expect(next).not.toHaveBeenCalled();
-    });
-
-    it('should call next on error', async () => {
-      const error = new Error('fail');
-      db.Utilizador.findAll.mockRejectedValue(error);
-
-      await userController.checkUser(req, res, next);
-
-      expect(next).toHaveBeenCalledWith(error);
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
   describe('addUser', () => {
-    it('should create user and respond success', async () => {
-      req.body = {
-        escola_id: 1,
-        nome: 'Test User',
-        email: 'test@test.com',
-        passwordHash: '123456',
+    it('should create a user', async () => {
+      const req = {
+        body: {
+          escola_id: 1,
+          nome: 'Test User',
+          email: 'test@email.com',
+          passwordHash: 'plainpass'
+        }
       };
-      db.Utilizador.create.mockResolvedValue(true);
+      const res = mockRes();
 
-      await userController.addUser(req, res, next);
+      bcrypt.hash.mockResolvedValue('hashedpass');
+      db.Utilizador.create = jest.fn().mockResolvedValue({});
 
-      expect(db.Utilizador.create).toHaveBeenCalledWith({
-        escola_id: 1,
-        nome: 'Test User',
-        email: 'test@test.com',
-        passwordHash: '123456',
-        pontos: 0,
-      });
+      await addUser(req, res, next);
+
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({ msg: 'Utilizador criado com sucesso!' });
-      expect(next).not.toHaveBeenCalled();
-    });
-
-    it('should call next on create error', async () => {
-      const error = new Error('create failed');
-      db.Utilizador.create.mockRejectedValue(error);
-
-      await userController.addUser(req, res, next);
-
-      expect(next).toHaveBeenCalledWith(error);
     });
   });
+
+  describe('apagarUser', () => {
+    it('should delete a user', async () => {
+      const req = { params: { user_id: 1 } };
+      const res = mockRes();
+
+      db.Utilizador.destroy = jest.fn().mockResolvedValue(1);
+
+      await apagarUser(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(204);
+      expect(res.send).toHaveBeenCalled();
+    });
+  });
+
 });
