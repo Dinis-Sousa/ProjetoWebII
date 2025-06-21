@@ -91,9 +91,9 @@ let checkUser = async (req, res, next) => {
                             token: token
                         })
                     break;
-                    case 'COLABORADOR' :
+                    case 'COORDENADOR' :
                         res.status(200).json({
-                            msg: 'Colaborador logado',
+                            msg: 'COORDENADOR logado',
                             token: token
                         })
                     break;
