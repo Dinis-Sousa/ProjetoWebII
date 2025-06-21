@@ -22,7 +22,6 @@ let getAllAtividades = async (req, res, next) => {
 let addAtividade = async (req, res, next) => {
     const {nome, descricao, area_id, dataInicio, dataFim, estado} = req.body
     const myInfo = {nome, descricao, area_id, dataInicio, dataFim, estado}
-    console.log(myInfo)
     try {
         await Atividade.create(myInfo);
         res.status(201).json({
@@ -34,7 +33,6 @@ let addAtividade = async (req, res, next) => {
 }
 let apagarAtividade = async (req, res, next) => {
     const atividade_id = req.params.id
-    console.log(atividade_id)
     try {
         await Atividade.destroy({
             where: {
@@ -75,9 +73,9 @@ let alterarEstado = async (req, res, next) => {
 }
 
 let getSessionsByAtivity = async (req, res, next) => {
-    const {atividade_id} = req.params.id
+    const atividade_id = req.params.id
     try {
-        const Sessions = Sessao.findAll({
+        const Sessions = await Sessao.findAll({
             attributes : ['sessao_id', 'atividade_id', 'dataMarcada', 'horaMarcada', 'vagas'],
             where : {
                 atividade_id : atividade_id
@@ -106,7 +104,6 @@ let getAtivityNameById = async (req, res, next) => {
         if(!nameAtivity){
             throw new ErrorHandler(404, 'Atividade com esse id não encontrada!')
         }
-        console.log(nameAtivity)
 
         res.status(200).json(nameAtivity)
     } catch(err) {

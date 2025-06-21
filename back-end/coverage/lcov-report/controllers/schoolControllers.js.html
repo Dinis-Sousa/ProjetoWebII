@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>27/27</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
-                <span class="quiet">Functions</span>
                 <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>3/3</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
@@ -115,12 +115,7 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a>
-<a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a>
-<a name='L58'></a><a href='#L58'>58</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -128,22 +123,17 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -182,27 +172,22 @@ const School = db.School
 &nbsp;
 const {ErrorHandler} = require('../utils/error')
 &nbsp;
-let getAllSchool = async (req, res, next) =&gt;{
-    try { 
-        const Schools = await School.findAll({
-            attributes: ['escola_id','nome', 'morada', 'codigoPostal', 'localidade', 'telefone', 'email', 'nivelCertificacao']
-        })
-        if(!Schools){
-            return new ErrorHandler(404, `Cannot find the data requested`)
-        }
-        const plainSchools = Schools.map(school =&gt; school.get({ plain: true }));
-        return res.status(200).json({
-            data: plainSchools
-        })
-    } catch (err){
-        next(err);
+let getAllSchool = async (req, res, next) =&gt; {
+  try {
+    const Schools = await School.findAll();
+    if (!Schools || Schools.length === 0) {
+      throw new ErrorHandler(404, `Cannot find the data requested`);
     }
+    return res.status(200).json(Schools);
+  } catch (err) {
+    next(err);
+  }
 }
+&nbsp;
 &nbsp;
 let addSchool = async (req, res, next) =&gt; { 
     let {nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao} = req.body;
     let nEscola = {nome, morada, codigoPostal, localidade, telefone, email, nivelCertificacao}
-    console.log(nEscola)
     try{
     await School.create(nEscola);
         res.status(201).json({
@@ -214,7 +199,7 @@ let addSchool = async (req, res, next) =&gt; {
 }
 &nbsp;
 let apagarSchool = async (req, res, next) =&gt; {
-    let school_id = req.params.id
+    let school_id = req.params.escola_id
     try {
         await School.destroy({
             where : {
@@ -241,7 +226,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-06-14T11:08:06.207Z
+                at 2025-06-21T12:53:23.756Z
             </div>
         <script src="../prettify.js"></script>
         <script>

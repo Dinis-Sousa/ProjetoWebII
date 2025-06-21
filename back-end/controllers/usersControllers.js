@@ -10,7 +10,6 @@ const { ErrorHandler } = require("../utils/error.js");
 
 let getSessaoInscritasByUser = async (req, res, next) => {
     const user_id = req.params.id
-    console.log(user_id)
     try {
         const userName = await User.findOne({
             attributes : ['nome'],
@@ -46,7 +45,7 @@ let getAllUsers = async (req, res, next) => {
 
         return res.status(200).json(Utilizadores);
     } catch (err) {
-        console.error(err);
+        next(err);
     }
 }
 
@@ -83,7 +82,6 @@ let checkUser = async (req, res, next) => {
                         perfil : user1.perfil
                         };
             const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
-            console.log('JWT:', token);
                 switch(user1.perfil){
                     case 'ALUNO':
                         res.status(200).json({

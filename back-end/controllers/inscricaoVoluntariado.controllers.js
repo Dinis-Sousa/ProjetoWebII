@@ -162,8 +162,8 @@ let listOfUsersBySession = async (req, res, next) => {
 }
 
 module.exports = {
-    marcarPresenca,
     inscrever,
+    marcarPresenca,
     getTheRegistration,
     removerInscricao,
     listOfUsersBySession,
