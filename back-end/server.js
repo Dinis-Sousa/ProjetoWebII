@@ -87,6 +87,8 @@ app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json({ error: err.message || 'Internal Server Error' });
 });
 
+module.exports = app;
+
 app.listen(PORT, HOST, (err) => {
     console.log(`YOUR SERVER IS RUNNING AT http://${HOST}:${PORT}`)
 })

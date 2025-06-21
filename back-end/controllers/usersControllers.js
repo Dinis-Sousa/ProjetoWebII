@@ -50,7 +50,7 @@ let getAllUsers = async (req, res, next) => {
 }
 
 let apagarUser = async (req, res, next) => {
-    const user_id = req.params.user_id
+    const user_id = await req.params.user_id
     try {
         await User.destroy({
             where: {

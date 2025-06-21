@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
-const authenticateTokenC = (req, res, next) => {
+const authenticateTokenC = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; 
 
@@ -20,7 +20,7 @@ const authenticateTokenC = (req, res, next) => {
   });
 };
 
-const authenticateTokenA = (req, res, next) => {
+const authenticateTokenA = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; 
 
