@@ -1,6 +1,20 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
+// Função para criar token JWT
+const createToken = (user) => {
+  return jwt.sign(
+    { 
+      user_id: user.user_id, 
+      nome: user.nome, 
+      email: user.email, 
+      role: user.role || 'ADMIN' 
+    }, 
+    process.env.JWT_SECRET || 'test_secret_key',
+    { expiresIn: '1h' }
+  );
+};
+
 const authenticateTokenC = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; 
@@ -40,4 +54,8 @@ const authenticateTokenA = async (req, res, next) => {
   });
 };
 
-module.exports = {authenticateTokenC, authenticateTokenA};
+module.exports = {
+  authenticateTokenC, 
+  authenticateTokenA,
+  createToken
+};
