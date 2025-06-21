@@ -37,10 +37,6 @@ app.use('/sessions', require('./routes/Session.routes'))
 // Use Areas router
 app.use('/areas', require('./routes/Area.routes'))
 
-// Use Cloudinary router
-app.use('/cloud', require('./routes/cloud.routes'))
-
-
 //handle invalid routes (404)    
 app.use((req, res, next) => {
     res.status(404).json({ message: `The requested resource was not found: ${req.method} ${req.originalUrl}` });

@@ -17,7 +17,6 @@ let RegisterMiddleware = async (req, res, next) => {
         }
        next()
    } catch(err){
-        console.error('Erro ao validar o email inserido:', err);
         return res.status(500).json({
             error: 'Erro interno do servidor ao validar o email inserido.'
         });

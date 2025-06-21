@@ -8,7 +8,9 @@ const authenticateTokenC = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Access denied, token missing!' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    req.user = user;
+    if (err || !user) {
+      return res.status(403).json({ msg: 'Token inválido.' });
+    }
     
     const perfil = req.user.perfil
     if(perfil == 'ALUNO'){
@@ -25,7 +27,9 @@ const authenticateTokenA = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Access denied, token missing!' });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    req.user = user;
+    if(err || !user) {
+      return res.status(403).json({ msg: 'Token inválido.' });
+    }
     
     const perfil = req.user.perfil
     if(perfil == 'ADMIN'){

@@ -4,12 +4,7 @@ const {authenticateTokenC} = require('../utils/auth.js');
 const validateDateMiddleware = require('../utils/validateDateMiddleware.js')
 
 const atividadeController = require('../controllers/atividadeControllers.js');
-const adesaoAtividadeControllers = require('../controllers/adesaoAtividadeControllers.js')
 
-router.delete('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.apagarAdesao)
-router.get('/:atividade_id/schools', adesaoAtividadeControllers.escolasPorAtividade)
-router.put('/:atividade_id/schools/:escola_id', adesaoAtividadeControllers.addAdesao)
-router.get('/schools', adesaoAtividadeControllers.getAllAdesoes)
 router.get('/:id/sessions', atividadeController.getSessionsByAtivity)
 router.get('/', atividadeController.getAllAtividades); 
 router.post('/', authenticateTokenC,  validateDateMiddleware,  atividadeController.addAtividade);

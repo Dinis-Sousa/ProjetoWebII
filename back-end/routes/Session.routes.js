@@ -2,7 +2,7 @@ const express = require('express')
 require('dotenv').config(); 
 const router = express.Router()
 const {authenticateTokenC} = require('../utils/auth.js');
-const validateDateAndHour = require('../utils/ValidadeDateAndHourMiddleware.js');
+const validateDateAndHour = require('../utils/ValidateDateAndHourMiddleware.js');
 
 const SessaoControllers = require('../controllers/sessaoControllers')
 const inscricaoVoluntariadoControllers = require('../controllers/inscricaoVoluntariado.controllers')

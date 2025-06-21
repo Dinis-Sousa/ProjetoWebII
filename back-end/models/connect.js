@@ -37,7 +37,6 @@ db.Area = require('./areaTematics_models')(sequelize, Sequelize.DataTypes);
 db.Sessao = require('./sessao_models')(sequelize, Sequelize.DataTypes);
 db.Conquistas = require('./conquistas_models')(sequelize, Sequelize.DataTypes);
 db.InscritosSessao = require('./InscricaoVoluntariado_model')(sequelize, Sequelize.DataTypes);
-db.AdesaoAtividade = require('./adesaoAtividade_model')(sequelize, Sequelize.DataTypes);
 
 // M user 1 School
 db.Utilizador.hasOne(db.School, {foreignKey: 'escola_id', allowNull: false, onDelete: 'CASCADE'});
@@ -50,14 +49,6 @@ db.Area.belongsTo(db.Atividade, {foreignKey: 'area_id',  allowNull: false});
 // M Sessao 1 Atividade
 db.Sessao.hasOne(db.Atividade, {foreignKey: 'atividade_id', allowNull: false, onDelete: 'CASCADE'});
 db.Atividade.belongsTo(db.Sessao, {foreignKey: 'atividade_id',  allowNull: false});
-
-// M atividade N School
-db.Atividade.belongsToMany(db.School, {
-    through: db.AdesaoAtividade,  foreignKey: 'atividade_id', otherKey : 'escola_id', timestamps: false
-});
-db.School.belongsToMany(db.Atividade, {
-    through: db.AdesaoAtividade,  foreignKey: 'escola_id', otherKey : 'atividade_id', timestamps: false
-});
 
 // M sessao N users
 db.Sessao.belongsToMany(db.Utilizador, {
