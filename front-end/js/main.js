@@ -100,7 +100,7 @@ const myTBody = document.getElementById('ativityTBody')
             <td>${sessao.horaMarcada}</td>
             <td>${sessao.vagas}</td>
             <td>
-            <button class="styleBtn" onclick="registerInSession(${sessao.sessao_id})">Inscrever-me</button>
+            <button class="styleBtn" id="${sessao.sessao_id}" onclick="registerInSession(${sessao.sessao_id})">Inscrever-me</button>
             <button class="styleBtn" onclick="removeRegister(${sessao.sessao_id})">Remover Inscrição</button>
             </td>
             </tr>

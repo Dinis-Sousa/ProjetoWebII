@@ -6,6 +6,9 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true 
         },
+        escola_id: {
+            type: DataTypes.INTEGER,
+        },
         nome: {
             type: DataTypes.STRING,
             allowNull: false,

@@ -53,7 +53,7 @@ function gerarRelatorioPDF() {
         Authorization: `Bearer ${token}`
       }
     })
-    alert('User apagado com sucesso!')
+    alert('User apagado com sucesso!');
     await loadUsers();
   }
 

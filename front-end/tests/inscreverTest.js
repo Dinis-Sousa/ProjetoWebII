@@ -1,9 +1,10 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const {login} = require('./loginTest.js');
 
-let login = async () => {
+let inscrever = async () => {
     const driver = await new Builder().forBrowser('chrome').build();
 
-    try {
+    try{
         // Acessar a página local
         await driver.get('http://127.0.0.1:5500/front-end/index.html');
 
@@ -26,15 +27,25 @@ let login = async () => {
         const registBtn = await driver.findElement(By.className('btn-enviar'));
         await registBtn.click();
 
-        await driver.sleep(2000);
-        console.log('✅ Login realizado com sucesso!.');
+        await driver.sleep(1000);
+
+        await driver.wait(until.elementLocated(By.xpath("//*[text()='Plano de Atividades']")), 5000);
+        const planoDeAtividadesBtn = await driver.findElement(By.xpath("//*[text()='Plano de Atividades']"));
+        await planoDeAtividadesBtn.click();
+
+        await driver.sleep(1000);
+
+        const inscreverBtn = await driver.findElement(By.id('1'));
+        await inscreverBtn.click();
+
+        await driver.sleep(1000);
+        console.log('✅ Inscrição realizada com sucesso!.');
+
     } catch(err){
-        console.error('❌ Erro durante a realização do login:', err);
+        console.error('❌ Erro durante a realização da inscricao:', err);
     } finally {
         await driver.quit();
     }
-
 }
-login()
 
-module.exports = {login}
+inscrever()

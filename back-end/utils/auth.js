@@ -11,7 +11,7 @@ const authenticateTokenC = async (req, res, next) => {
     if (err || !user) {
       return res.status(403).json({ msg: 'Token inválido.' });
     }
-    
+    req.user = user
     const perfil = req.user.perfil
     if(perfil == 'ALUNO'){
       return res.status(403).json({msg: `Acesso negado!`})
@@ -30,7 +30,8 @@ const authenticateTokenA = async (req, res, next) => {
     if(err || !user) {
       return res.status(403).json({ msg: 'Token inválido.' });
     }
-    
+
+    req.user = user
     const perfil = req.user.perfil
     if(perfil == 'ADMIN'){
       next();
