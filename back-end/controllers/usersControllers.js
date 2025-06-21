@@ -112,10 +112,10 @@ let checkUser = async (req, res, next) => {
 }
 
 let addUser = async (req, res, next) => {
-    const {escola_id, nome, email, passwordHash} = req.body
+    const {escola_id, nome, email, passwordHash, perfil = 'ALUNO'} = req.body
     let pontos = 0;
     try {
-        const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
+        const nUserInfo = {escola_id, nome, email, passwordHash, perfil, pontos}
         await User.create(nUserInfo)
         res.status(201).json({
             msg: 'Utilizador criado com sucesso!'
@@ -133,4 +133,3 @@ module.exports = {
     addUser,
     apagarUser,
 }
-

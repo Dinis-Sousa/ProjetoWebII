@@ -38,17 +38,17 @@ db.Sessao = require('./sessao_models')(sequelize, Sequelize.DataTypes);
 db.Conquistas = require('./conquistas_models')(sequelize, Sequelize.DataTypes);
 db.InscritosSessao = require('./InscricaoVoluntariado_model')(sequelize, Sequelize.DataTypes);
 
-// M user 1 School
-db.Utilizador.hasOne(db.School, {foreignKey: 'escola_id', allowNull: false, onDelete: 'CASCADE'});
-db.School.belongsTo(db.Utilizador, {foreignKey: 'escola_id',  allowNull: false});
+// 1 School M User
+db.School.hasMany(db.Utilizador, {foreignKey: 'escola_id', allowNull: true, onDelete: 'SET NULL'});
+db.Utilizador.belongsTo(db.School, {foreignKey: 'escola_id', allowNull: true});
 
-// M Atividade 1 Area
-db.Atividade.hasOne(db.Area, {foreignKey: 'area_id', allowNull: false, onDelete: 'CASCADE'});
-db.Area.belongsTo(db.Atividade, {foreignKey: 'area_id',  allowNull: false});
+// 1 Area M Atividade
+db.Area.hasMany(db.Atividade, {foreignKey: 'area_id', allowNull: true, onDelete: 'SET NULL'});
+db.Atividade.belongsTo(db.Area, {foreignKey: 'area_id', allowNull: true});
 
-// M Sessao 1 Atividade
-db.Sessao.hasOne(db.Atividade, {foreignKey: 'atividade_id', allowNull: false, onDelete: 'CASCADE'});
-db.Atividade.belongsTo(db.Sessao, {foreignKey: 'atividade_id',  allowNull: false});
+// 1 Atividade M Sessao
+db.Atividade.hasMany(db.Sessao, {foreignKey: 'atividade_id', allowNull: false, onDelete: 'CASCADE'});
+db.Sessao.belongsTo(db.Atividade, {foreignKey: 'atividade_id', allowNull: false});
 
 // M sessao N users
 db.Sessao.belongsToMany(db.Utilizador, {

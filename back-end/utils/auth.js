@@ -13,10 +13,15 @@ const authenticateTokenC = async (req, res, next) => {
     }
     req.user = user
     const perfil = req.user.perfil
-    if(perfil == 'ALUNO'){
+    if(perfil === 'ALUNO'){
       return res.status(403).json({msg: `Acesso negado!`})
     }
-    next();
+    // Explicitly allow ADMIN and COLABORADOR
+    if(perfil === 'ADMIN' || perfil === 'COLABORADOR') {
+      next();
+    } else {
+      return res.status(403).json({msg: `Perfil não reconhecido!`})
+    }
   });
 };
 

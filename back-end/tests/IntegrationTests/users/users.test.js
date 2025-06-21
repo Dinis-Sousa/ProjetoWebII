@@ -14,13 +14,21 @@ const testUser = {
 
 // Clean up database before and after tests
 beforeAll(async () => {
-  // Clear users table or create test data
-  await db.Utilizador.destroy({ where: {} });
+  try {
+    // Clear users table or create test data
+    await db.Utilizador.destroy({ where: {} });
+  } catch (error) {
+    console.error('Error in beforeAll:', error);
+  }
 });
 
 afterAll(async () => {
-  // Clean up after tests
-  await db.Utilizador.destroy({ where: {} });
+  try {
+    // Clean up after tests
+    await db.Utilizador.destroy({ where: {} });
+  } catch (error) {
+    console.error('Error in afterAll:', error);
+  }
 });
 
 describe('User API Integration Tests', () => {

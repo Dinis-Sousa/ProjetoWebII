@@ -29,20 +29,28 @@ const testUser = {
 
 // Clean up database before and after tests
 beforeAll(async () => {
-  // Clear tables or create test data
-  await db.Sessao.destroy({ where: {} });
-  await db.Atividade.destroy({ where: {} });
-  await db.Utilizador.destroy({ where: {} });
+  try {
+    // Clear tables or create test data
+    await db.Sessao.destroy({ where: {} });
+    await db.Atividade.destroy({ where: {} });
+    await db.Utilizador.destroy({ where: {} });
 
-  // Create test user for authentication
-  await db.Utilizador.create(testUser);
+    // Create test user for authentication
+    await db.Utilizador.create(testUser);
+  } catch (error) {
+    console.error('Error in beforeAll:', error);
+  }
 });
 
 afterAll(async () => {
-  // Clean up after tests
-  await db.Sessao.destroy({ where: {} });
-  await db.Atividade.destroy({ where: {} });
-  await db.Utilizador.destroy({ where: {} });
+  try {
+    // Clean up after tests
+    await db.Sessao.destroy({ where: {} });
+    await db.Atividade.destroy({ where: {} });
+    await db.Utilizador.destroy({ where: {} });
+  } catch (error) {
+    console.error('Error in afterAll:', error);
+  }
 });
 
 describe('Session API Integration Tests', () => {

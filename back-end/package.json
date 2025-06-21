@@ -17,6 +17,6 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles",
-    "test:integration": "cross-env NODE_ENV=test jest --config jest.integration.config.js"
+    "test:integration": "cross-env NODE_ENV=test jest --config jest.integration.config.js --detectOpenHandles --forceExit"
   }
 }
