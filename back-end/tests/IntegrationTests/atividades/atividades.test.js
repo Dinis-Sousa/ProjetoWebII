@@ -1,8 +1,8 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 const { Sequelize } = require('sequelize');
 const app = require('../../../server');
 const db = require('../../../models/connect');
-const { createToken } = require('../../../utils/auth');
 
 // Dados de teste
 const mockAdminUser = {
@@ -21,8 +21,8 @@ const mockAtividade = {
   estado: 'PENDENTE'
 };
 
-// Token de autenticação
-let authToken;
+// Token de autenticação mockado
+let authToken; // Será definido no beforeAll
 
 // Configuração dos testes
 describe('Testes de Integração - Atividades', () => {
@@ -30,8 +30,15 @@ describe('Testes de Integração - Atividades', () => {
     // Sincronizar o banco de dados de teste
     await db.sequelize.sync({ force: true });
     
-    // Criar um token de autenticação
-    authToken = createToken(mockAdminUser);
+    // Criar um token de autenticação mockado
+    authToken = jwt.sign(
+      { user_id: mockAdminUser.user_id, perfil: 'ADMIN' }, 
+      process.env.JWT_SECRET || 'test_secret_key',
+      { expiresIn: '1h' }
+    );
+    
+    // Configurar o token no app para uso nos testes
+    app.set('testToken', authToken);
   });
 
   afterAll(async () => {
