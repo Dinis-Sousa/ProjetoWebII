@@ -1,95 +1,119 @@
 const { request, db } = require('../setup');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-describe('Rotas de Utilizador (Integração)', () => {
-  const fakeUser = {
-    name: 'Utilizador Teste',
-    email: `teste_${Date.now()}@example.com`,
-    password: '123456',
-    role: 'client'
-  };
+// Mock data for testing
+const testUser = {
+  escola_id: 1,
+  nome: 'Test User',
+  email: 'test@example.com',
+  passwordHash: 'hashedpassword123',
+  perfil: 'ALUNO',
+  pontos: 0
+};
 
+// Clean up database before and after tests
+beforeAll(async () => {
+  // Clear users table or create test data
+  await db.Utilizador.destroy({ where: {} });
+});
+
+afterAll(async () => {
+  // Clean up after tests
+  await db.Utilizador.destroy({ where: {} });
+});
+
+describe('User API Integration Tests', () => {
   let userId;
-  let tokenClient;
-  let sessaoId = 1; // ⚠️ Substituir por um ID válido na BD de testes
+  let authToken;
 
-  test('POST /users - Deve registar um novo utilizador', async () => {
-    const res = await request
+  // Test user creation
+  test('Should create a new user', async () => {
+    const response = await request
       .post('/users')
-      .send(fakeUser);
-
-    expect(res.statusCode).toBe(201);
-    expect(res.body).toHaveProperty('user_id');
-
-    userId = res.body.user_id;
-  });
-
-  test('POST /users/login - Deve autenticar e devolver token', async () => {
-    const res = await request
-      .post('/users/login')
       .send({
-        email: fakeUser.email,
-        password: fakeUser.password
+        escola_id: testUser.escola_id,
+        nome: testUser.nome,
+        email: testUser.email,
+        passwordHash: testUser.passwordHash
       });
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('token');
+    expect(response.status).toBe(201);
+    expect(response.body.msg).toBe('Utilizador criado com sucesso!');
 
-    tokenClient = res.body.token;
+    // Verify user was created in database
+    const createdUser = await db.Utilizador.findOne({ where: { email: testUser.email } });
+    expect(createdUser).not.toBeNull();
+    userId = createdUser.user_id;
   });
 
-  test('PUT /users/:user_id/sessions/:sessao_id - Deve inscrever utilizador numa sessão', async () => {
-    const res = await request
-      .put(`/users/${userId}/sessions/${sessaoId}`)
-      .send({}); // Adiciona dados se necessário
+  // Test user authentication
+  test('Should authenticate a user and return JWT token', async () => {
+    const response = await request
+      .post('/users/login')
+      .send({
+        tEmail: testUser.email,
+        passHash: testUser.passwordHash
+      });
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    expect(response.body.msg).toBe('Aluno logado');
+
+    authToken = response.body.token;
+
+    // Verify token is valid
+    const decoded = jwt.verify(authToken, process.env.JWT_SECRET);
+    expect(decoded).toHaveProperty('user_id');
+    expect(decoded).toHaveProperty('perfil');
   });
 
-  test('GET /users/:user_id/sessions/:sessao_id - Deve obter inscrição do utilizador numa sessão', async () => {
-    const res = await request
-      .get(`/users/${userId}/sessions/${sessaoId}`);
+  // Test get all users
+  test('Should get all users', async () => {
+    const response = await request
+      .get('/users')
+      .set('Authorization', `Bearer ${authToken}`);
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('registration_id');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+
+    const foundUser = response.body.find(user => user.email === testUser.email);
+    expect(foundUser).toBeDefined();
   });
 
-  test('PATCH /users/:user_id/sessions/:sessao_id - Deve marcar presença (token necessário)', async () => {
-    const res = await request
-      .patch(`/users/${userId}/sessions/${sessaoId}`)
-      .set('Authorization', `Bearer ${tokenClient}`)
-      .send({ presenca: true }); // Ajusta o payload conforme o teu controller
+  // Test get sessions by user
+  test('Should get sessions for a user', async () => {
+    const response = await request
+      .get(`/users/${userId}/sessions`)
+      .set('Authorization', `Bearer ${authToken}`);
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
   });
 
-  test('GET /users/:user_id/sessions - Deve obter todas as sessões em que o utilizador está inscrito', async () => {
-    const res = await request
-      .get(`/users/${userId}/sessions`);
+  // Test delete user
+  test('Should delete a user', async () => {
+    const response = await request
+      .delete(`/users/${userId}`)
+      .set('Authorization', `Bearer ${authToken}`);
 
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(response.status).toBe(204);
+
+    // Verify user was deleted
+    const deletedUser = await db.Utilizador.findOne({ where: { user_id: userId } });
+    expect(deletedUser).toBeNull();
   });
 
-  test('DELETE /users/:user_id/sessions/:sessao_id - Deve remover inscrição do utilizador', async () => {
-    const res = await request
-      .delete(`/users/${userId}/sessions/${sessaoId}`);
+  // Test authentication with invalid credentials
+  test('Should reject invalid credentials', async () => {
+    const response = await request
+      .post('/users/login')
+      .send({
+        tEmail: 'nonexistent@example.com',
+        passHash: 'wrongpassword'
+      });
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message');
+    expect(response.status).toBe(400);
   });
-
-  // ⚠️ Teste de DELETE /users/:id requer token de administrador
-  // Podes testar isso se já tiveres um token de admin válido disponível.
-  // Exemplo comentado abaixo:
-
-  // test('DELETE /users/:user_id - Deve apagar o utilizador (admin token)', async () => {
-  //   const res = await request
-  //     .delete(`/users/${userId}`)
-  //     .set('Authorization', `Bearer ${tokenAdmin}`);
-  //
-  //   expect(res.statusCode).toBe(200);
-  //   expect(res.body).toHaveProperty('message');
-  // });
 });
