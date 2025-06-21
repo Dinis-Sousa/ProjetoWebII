@@ -4,6 +4,7 @@ const db = require('../models/connect.js');
 require('dotenv').config(); 
 const User = db.Utilizador; 
 const InscritosSessao = db.InscritosSessao;
+const bcrypt = require('bcrypt');
 
 
 const { ErrorHandler } = require("../utils/error.js");
@@ -75,7 +76,8 @@ let checkUser = async (req, res, next) => {
             throw new ErrorHandler(400, 'Nao existe utilizador com esse email')
         } else {
             const user1 = Utilizador.dataValues
-            if(user1.passwordHash == passHash){
+            const isaMatched = await bcrypt.compare(passHash, user1.passwordHash);
+            if(isaMatched){
                 const secretKey = process.env.JWT_SECRET;
                 const payload = {
                         user_id : user1.user_id,
@@ -111,12 +113,24 @@ let checkUser = async (req, res, next) => {
     }
 }
 
+const saltRounds = 10;
 let addUser = async (req, res, next) => {
+    class Utilizador{
+        constructor(escola_id, nome, email, passwordHash, pontos){
+            this.escola_id = escola_id;
+            this.nome = nome;
+            this.email = email;
+            this.passwordHash = passwordHash;
+            this.pontos = pontos;
+        }
+    }
     const {escola_id, nome, email, passwordHash} = req.body
     let pontos = 0;
+    const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
     try {
-        const nUserInfo = {escola_id, nome, email, passwordHash, pontos}
-        await User.create(nUserInfo)
+        const password = await bcrypt.hash(nUserInfo.passwordHash, saltRounds);
+        const userN = new Utilizador(escola_id, nome, email, password, pontos)
+        await User.create(userN)
         res.status(201).json({
             msg: 'Utilizador criado com sucesso!'
         })    

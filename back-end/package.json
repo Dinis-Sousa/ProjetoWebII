@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -12,11 +13,12 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "sqlite3": "^5.1.7",
     "supertest": "^7.1.1"
   },
   "scripts": {
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "npm run test:unit && npx run test:integration",
     "test:unit": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles",
-    "test:integration": "cross-env NODE_ENV=test jest --config jest.integration.config.js"
+    "test:integration": "cross-env NODE_ENV=test jest --config=jest.integration.config.js"
   }
 }

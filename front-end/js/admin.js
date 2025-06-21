@@ -39,7 +39,7 @@ function gerarRelatorioPDF() {
             <td>${user.perfil}</td>
             <td>
               <button class="btn-editar">Editar</button>
-              <button class="btn-apagar" onClick="deleteUser(${user.user_id})">Apagar</button>
+              <button class="btn-apagar" id="${user.user_id}" onClick="deleteUser(${user.user_id})">Apagar</button>
             </td>
             </tr>
         `
