@@ -20,10 +20,15 @@ function gerarRelatorioPDF() {
     const UsersTBody = document.getElementById('UsersTBody');
     const ativitiesTBody = document.getElementById('ativitiesTBody');
     const sessionsTBody = document.getElementById('sessionsTBody');
+    const areasTBody = document.getElementById('areasTBody');
+    const atividadesConcluidas = document.getElementById('atividadesConcluidas');
+    const rankingAlunos = document.getElementById('rankingAlunos');
+    const nivelProjeto = document.getElementById('nivelProjeto');
     addEventListener('DOMContentLoaded', async () => {
       await loadUsers();
-      await loadAtivities();
-      await loadSessions();
+      await loadAreas();
+      await loadAtivitiesDone();
+      await loadRanking();
     })
 
     let loadUsers = async () => {
@@ -57,54 +62,79 @@ function gerarRelatorioPDF() {
     await loadUsers();
   }
 
-  let loadAtivities = async () => {
-      let atividades = await axios.get('http://localhost:5500/ativities')
-      const array = atividades.data
-      console.log(array)
-      array.forEach(atividade => {
+  let loadAreas = async () => {
+      let areas = await axios.get('http://localhost:5500/areas')
+      const array = areas.data
+      areasTBody.innerHTML = '';
+      array.forEach(area => {
         let card = `
           <tr>
-            <td>${atividade.atividade_id}</td>
-            <td>${atividade.nome}</td>
-            <td>${atividade.descricao}</td>
-            <td>${atividade.area_id}</td>
-            <td>${atividade.estado}</td>
-            <td>${atividade.dataInicio}</td>
-            <td>${atividade.dataFim}</td>
+            <td>${area.area_id}</td>
+            <td>${area.nome}</td>
+            <td>${area.descricao}</td>
             <td>
               <button class="btn-editar">Editar</button>
-              <button class="btn-apagar">Apagar</button>
+              <button class="btn-apagar" id="${area.area_id}" onclick="deleteAreas(${area.area_id})">Apagar</button>
             </td>
             </tr>
             </tr>
         `
-        ativitiesTBody.innerHTML += card
+        areasTBody.innerHTML += card
       })
     };
-    let loadSessions = async () => {
-      let sessoes = await axios.get('http://localhost:5500/sessions')
-      const array = sessoes.data
-      array.forEach(sessao => {
-        console.log(sessao)
-        let card = `
-          <tr>
-            <td>${sessao.sessao_id}</td>
-            <td>${sessao.nome}</td>
-            <td>${sessao.dataMarcada}</td>
-            <td>${sessao.horaMarcada}</td>
-            <td>${sessao.vagas}</td>
-            <td>
-              <button class="btn-editar">Editar</button>
-              <button class="btn-apagar">Apagar</button>
-            </td>
-            </tr>
-        `
-        sessionsTBody.innerHTML += card
-      })
-    };
+
+    let deleteAreas = async (id) => {
+       const token = sessionStorage.getItem('Token');
+    await axios.delete(`http://localhost:5500/areas/${id}`, {
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    })
+    alert('Area apagado com sucesso!');
+    await loadAreas();
+    }
 
     document.getElementById('logOutBtn').addEventListener('click', () => {
           sessionStorage.removeItem('Token');
         })
 
+    let loadAtivitiesDone = async () => {
+      const res = await axios.get('http://localhost:5500/ativities')
+      const ativities = res.data;
+      let count = 0
+      ativities.forEach(a => {
+        console.log(a.estado)
+        if(a.estado == 'CONCLUIDA'){
+            count += 1;
+        }
+      });
+      console.log(count)
+      atividadesConcluidas.innerHTML = `<span>${count}</span>`
+    }
+
+    let loadRanking = async () => {
+      const res = await axios.get('http://localhost:5500/users')
+      const users = await res.data
+      class Participante{
+        constructor(nome, number){
+          this.nome = nome;
+          this.number = number;
+        }
+      }
+      let ranking = [];
+      for (const u of users) {
+        const sessionRes = await axios.get(`http://localhost:5500/users/${u.user_id}/sessions`);
+        const sessions = sessionRes.data;
+        let number = sessions.length;
+        ranking.push(new Participante(u.nome, number));
+      }
+    ranking.sort((a, b) => Number(b.number) - Number(a.number));
+    console.log(ranking)
+    ranking.forEach(u => {
+      let row = `<li>${u.nome} - ${u.number}</li>`
+      rankingAlunos.innerHTML += row
+    })
+  }
+
     window.deleteUser = deleteUser
+    window.deleteAreas = deleteAreas

@@ -35,7 +35,7 @@
       <p>Municípios</p>
     </div>
     <div class="dado">
-      <h2 class="contador" id="schoolRegistered" data-alvo="2046">0</h2>
+      <h2 class="contador" id="schoolRegistered" data-alvo="2048">0</h2>
       <p>Escolas Inscritas</p>
     </div>
     <div class="dado">
@@ -155,12 +155,14 @@
   document.addEventListener('DOMContentLoaded', async () => {
       const Schools = await axios.get('http://localhost:5500/schools');
       console.log(Schools.data.length)
-      .then(res => {
-        schoolRegistered.innerHtml = `${Schools.data.length}`
-      })
-      .catch(err => {
-        console.error(err)
-      })
+      schoolRegistered.dataAlvo = `${Schools.data.length}`
+      schoolRegistered.innerHtml = `${Schools.data.length}`
       console.log(Schools.length)
   })
+  let loadSchoolsNumber = async () => {
+    const schools = await axios.get('http://localhost:5500/schools');
+    console.log(schools)
+    return schools.data.length
+  }
+  await loadSchoolsNumber()
 </script>

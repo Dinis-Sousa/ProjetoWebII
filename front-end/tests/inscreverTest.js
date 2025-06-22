@@ -1,5 +1,4 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const {login} = require('./loginTest.js');
 
 let inscrever = async () => {
     const driver = await new Builder().forBrowser('chrome').build();

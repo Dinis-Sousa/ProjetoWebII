@@ -10,10 +10,9 @@ let validateDateAndHour = async (req, res, next) => {
 
         // Verifica se algum dos valores não é um número
         if (
-            isNaN(hour) || isNaN(minute) || isNaN(second) ||
+            isNaN(hour) || isNaN(minute) ||
             hour < 0 || hour > 23 ||
-            minute < 0 || minute > 59 ||
-            second < 0 || second > 59
+            minute < 0 || minute > 59
         ) {
             throw new Error('Invalid time format');
         }
@@ -26,7 +25,8 @@ let validateDateAndHour = async (req, res, next) => {
 
         if (totalSeconds < start || totalSeconds > end) {
             return res.status(403).json({ error: 'Time must be between 09:00:00 and 18:00:00' });
-        }
+        } 
+        next()
 
     } catch (err){
         return res.status(500).json({

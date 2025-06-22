@@ -54,8 +54,24 @@
       await axios.post('http://localhost:5500/users/login', clientInfo)
       .then(res => {
         const token = res.data.token;
-        sessionStorage.setItem('Token', token)
-        window.location.href = 'index.html';
+        const perfil = res.data.perfil
+        sessionStorage.setItem('Token', token);
+        console.log(perfil)
+        switch (perfil){
+          case 'ALUNO':
+            window.location.href = 'index.html';
+            break
+          case 'COORDENADOR':
+            window.location.href = 'coordenador.html';
+            break
+          case 'ADMIN':
+            window.location.href = 'admin.html'
+            break
+          
+          default:
+            console.warn('Perfil desconhecido:', perfil);
+            window.location.href = 'login.html';
+        }
       })
       .catch(err => {
         console.error(err)

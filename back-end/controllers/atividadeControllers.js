@@ -23,6 +23,9 @@ let addAtividade = async (req, res, next) => {
     const {nome, descricao, area_id, dataInicio, dataFim, estado} = req.body
     const myInfo = {nome, descricao, area_id, dataInicio, dataFim, estado}
     try {
+        if(nome == ''){
+            throw new ErrorHandler(400, `You need to write the name of the activity!`);
+        }
         await Atividade.create(myInfo);
         res.status(201).json({
             msg:"atividade criada com sucesso"

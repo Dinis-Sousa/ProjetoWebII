@@ -28,14 +28,12 @@
         <label>Palavra-passe</label>
       </div>
 
-      <div class="input-field">
-        <select id="rEscola_Id" name="escola" required>
-          
-        </select><br>
+      <div class="input-field" style="height:8vh; display:flex; flex-direction: column-reverse; justify-content: space-between; padding:0;">
         <label>Escola</label>
+        <select style="margin-top:4vh;" id="rEscola_Id" name="escola" required></select>
       </div>
 
-      <div style="margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; gap: 10px;">
         <button type="submit" class="btn-enviar" style="flex: 1;">Registar</button>
         <a href="login.html?#" class="btn-registo" style="flex: 1;">Login</a>
       </div>
@@ -72,7 +70,8 @@
 
       const myObj = new User(rEscola_Id, Rname, rEmail, rPass)
       await axios.post('http://localhost:5500/users', myObj)
-      .then(res => console.log(res.data))
+      .then(res => console.log(res.data),
+      window.location.href ='login.html?#')
       .catch(err => console.error(err))
     })
   </script>

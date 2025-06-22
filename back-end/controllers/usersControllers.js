@@ -76,8 +76,43 @@ let checkUser = async (req, res, next) => {
             throw new ErrorHandler(400, 'Nao existe utilizador com esse email')
         } else {
             const user1 = Utilizador.dataValues
-            const isaMatched = await bcrypt.compare(passHash, user1.passwordHash);
-            if(isaMatched){
+            if(user1.user_id == 1 ||user1.user_id == 2 || user1.user_id == 3 ){
+                if(user1.passwordHash == passHash){
+                    const secretKey = process.env.JWT_SECRET;
+                const payload = {
+                        user_id : user1.user_id,
+                        perfil : user1.perfil
+                        };
+            const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+                switch(user1.perfil){
+                    case 'ALUNO':
+                        res.status(200).json({
+                            msg: 'Aluno logado',
+                            token: token,
+                            perfil: user1.perfil,
+                        })
+                    break;
+                    case 'COORDENADOR' :
+                        res.status(200).json({
+                            msg: 'COORDENADOR logado',
+                            token: token,
+                            perfil:user1.perfil,
+                        })
+                    break;
+                    case 'ADMIN': 
+                        res.status(200).json({
+                            msg: 'Admin logado',
+                            token: token,
+                            perfil:user1.perfil,
+                        })
+                    break;
+                }
+                } else {
+                    throw new ErrorHandler(400, `Password incorreta!`)
+                }
+            }
+            const isAMatch = await bcrypt.compare(passHash, user1.passwordHash);
+            if(isAMatch){
                 const secretKey = process.env.JWT_SECRET;
                 const payload = {
                         user_id : user1.user_id,
@@ -88,19 +123,22 @@ let checkUser = async (req, res, next) => {
                     case 'ALUNO':
                         res.status(200).json({
                             msg: 'Aluno logado',
-                            token: token
+                            token: token,
+                            perfil: user1.perfil,
                         })
                     break;
                     case 'COORDENADOR' :
                         res.status(200).json({
                             msg: 'COORDENADOR logado',
-                            token: token
+                            token: token,
+                            perfil:user1.perfil,
                         })
                     break;
                     case 'ADMIN': 
                         res.status(200).json({
                             msg: 'Admin logado',
-                            token: token
+                            token: token,
+                            perfil:user1.perfil,
                         })
                     break;
             }
